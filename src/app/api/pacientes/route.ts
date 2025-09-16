@@ -1,4 +1,5 @@
 import prisma from '@/lib/prisma'
+import { Convenios, Sexo } from '@prisma/client';
 import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
 
@@ -8,9 +9,11 @@ const createPacienteSchema = z.object({
     rg: z.string().min(5).optional(),
     email: z.string().email().optional(),
     celular: z.string().min(10),
-    idade: z.string(), // Corrigido para string
-    sexo: z.enum(['MASCULINO', 'FEMININO', 'OUTRO']),
-    convenio: z.enum(['HAOC', 'UNIMED', 'SAMARITANO', 'BRADESCO', 'SULAMERICA', 'AMIL', 'PORTOSEGURO', 'NOTREDAME']).optional(),
+    idade: z.string().trim().min(1, {
+        message: "A idade é obrigatória.",
+    }),
+    sexo: z.nativeEnum(Sexo),
+    convenio: z.nativeEnum(Convenios).optional(),
     numeroConvenio: z.string().optional(),
     contato_emergencia: z.string().min(2).optional(),
 });

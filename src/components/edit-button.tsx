@@ -29,7 +29,7 @@ const EditPacienteButton = ({ paciente }: EditPacienteButtonProps) => {
                 defaultValues={{
                     ...paciente,
                 }}
-                transactionId={paciente.id}
+                pacienteId={paciente.id}
             />
         </>
     );
