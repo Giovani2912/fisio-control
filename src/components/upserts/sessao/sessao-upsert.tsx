@@ -1,11 +1,13 @@
+"use client";
+
 import { toast } from "sonner";
-import GenericUpsert from "./generic-upsert";
+import GenericUpsert from "../generic-upsert";
 import {
     sessaoSchema,
     SessaoFormData,
     sessaoDefaultValues,
     sessaoFields
-} from "../upserts/upsert-config";
+} from "./config";
 // import { UpsertSessao } from "@/app/actions/UpsertSessao"; // Você precisará criar essa action
 
 interface UpsertSessaoProps {

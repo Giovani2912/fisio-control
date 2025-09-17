@@ -2,13 +2,13 @@
 
 import { useState } from "react"
 import { deletePaciente } from "@/app/actions/upsertPaciente"
-import EditPacienteButton from "@/components/edit-button"
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Sexo, Convenios } from "@prisma/client"
 import { ColumnDef } from "@tanstack/react-table"
 import { Pen, TrashIcon } from "lucide-react"
 import { toast } from "sonner"
+import { EditPacienteButton } from "@/components/upserts/paciente/paciente-buttons"
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.

@@ -1,5 +1,5 @@
 import Title from '@/components/title';
-import { CreateAvaliacaoButton, EditAvaliacaoButton } from '@/components/upserts/generic-buttons';
+import { CreateAvaliacaoButton, EditAvaliacaoButton } from '@/components/upserts/avaliacao/avaliacao-buttons';
 import { Avaliacao } from "@prisma/client";
 
 

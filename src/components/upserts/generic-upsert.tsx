@@ -1,3 +1,5 @@
+"use client";
+
 import { Button } from "../ui/button";
 import {
     Dialog,
@@ -27,9 +29,17 @@ import {
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState, useEffect } from "react";
-import { toast } from "sonner";
 import { z } from "zod";
-
+import { format } from "date-fns"
+import { Calendar as CalendarIcon } from "lucide-react"
+import { cn } from "@/lib/utils"
+import { Calendar } from "@/components/ui/calendar"
+import {
+    Popover,
+    PopoverContent,
+    PopoverTrigger,
+} from "@/components/ui/popover"
+import { Textarea } from "@/components/ui/textarea"
 // Tipos para os campos do formulário
 export interface SelectOption {
     value: string;
@@ -39,7 +49,7 @@ export interface SelectOption {
 export interface FormFieldConfig {
     name: string;
     label: string;
-    type: 'text' | 'email' | 'tel' | 'number' | 'select';
+    type: 'text' | 'email' | 'tel' | 'number' | 'select' | 'textarea' | 'date';
     placeholder?: string;
     required?: boolean;
     options?: SelectOption[]; // Para campos select
@@ -58,6 +68,77 @@ interface GenericUpsertProps<T extends Record<string, any>> {
     onSubmit: (data: T, isUpdate: boolean) => Promise<void>;
     entityId?: string;
     isLoading?: boolean;
+}
+
+const renderFormControl = (type: string, formField: any, placeholder?: string, options?: Array<{ value: string, label: string }>) => {
+    switch (type) {
+        case 'select':
+            return (
+                <Select
+                    onValueChange={formField.onChange}
+                    value={formField.value}
+                >
+                    <SelectTrigger>
+                        <SelectValue placeholder={placeholder} />
+                    </SelectTrigger>
+                    <SelectContent>
+                        {options?.map((option) => (
+                            <SelectItem key={option.value} value={option.value}>
+                                {option.label}
+                            </SelectItem>
+                        ))}
+                    </SelectContent>
+                </Select>
+            )
+
+        case 'textarea':
+            return (
+                <Textarea
+                    placeholder={placeholder}
+                    className="resize-none"
+                    {...formField}
+                />
+            )
+
+        case 'date':
+            return (
+                <Popover>
+                    <PopoverTrigger asChild>
+                        <Button
+                            variant={"outline"}
+                            className={cn(
+                                "w-full justify-start text-left font-normal",
+                                !formField.value && "text-muted-foreground"
+                            )}
+                        >
+                            <CalendarIcon className="mr-2 h-4 w-4" />
+                            {formField.value ? (
+                                format(formField.value, "dd/MM/yyyy")
+                            ) : (
+                                <span>{placeholder || "Selecione uma data"}</span>
+                            )}
+                        </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0">
+                        <Calendar
+                            mode="single"
+                            selected={formField.value}
+                            onSelect={formField.onChange}
+                            initialFocus
+                        />
+                    </PopoverContent>
+                </Popover>
+            )
+
+        default:
+            return (
+                <Input
+                    type={type}
+                    placeholder={placeholder}
+                    {...formField}
+                />
+            )
+    }
 }
 
 function GenericUpsert<T extends Record<string, any>>({
@@ -113,29 +194,7 @@ function GenericUpsert<T extends Record<string, any>>({
                     <FormItem className={field.gridColumn === 'full' ? 'md:col-span-2' : ''}>
                         <FormLabel>{label}</FormLabel>
                         <FormControl>
-                            {type === 'select' ? (
-                                <Select
-                                    onValueChange={formField.onChange}
-                                    value={formField.value}
-                                >
-                                    <SelectTrigger>
-                                        <SelectValue placeholder={placeholder} />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        {options?.map((option) => (
-                                            <SelectItem key={option.value} value={option.value}>
-                                                {option.label}
-                                            </SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
-                            ) : (
-                                <Input
-                                    type={type}
-                                    placeholder={placeholder}
-                                    {...formField}
-                                />
-                            )}
+                            {renderFormControl(type, formField, placeholder, options)}
                         </FormControl>
                         <FormMessage />
                     </FormItem>

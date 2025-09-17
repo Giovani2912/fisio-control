@@ -1,4 +1,3 @@
-import MaxWidthWrapper from '@/components/max-width-wrapper';
 import { columns, Paciente } from "./data/columns"
 import { DataTable } from "./data/data-table"
 import Title from '@/components/title';
@@ -13,6 +12,7 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination"
 import SearchInput from '@/components/search';
+import { CreatePacienteButton } from '@/components/upserts/paciente/paciente-buttons';
 
 interface PacientesProps {
   searchParams: {
@@ -100,7 +100,7 @@ export default async function Pacientes({ searchParams }: PacientesProps) {
 
   return (
     <>
-      <Title title="Pacientes" createButton={true} />
+      <Title title="Pacientes" createButton={<CreatePacienteButton />} />
 
       {/* Componente de busca com sugestões */}
       <SearchInput initialSearch={searchTerm} />

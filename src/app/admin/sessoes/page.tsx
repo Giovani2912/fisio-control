@@ -1,5 +1,5 @@
 import Title from '@/components/title';
-import { CreateSessaoButton, EditSessaoButton } from '@/components/upserts/generic-buttons';
+import { CreateSessaoButton, EditSessaoButton } from '@/components/upserts/sessao/sessao-buttons';
 import { Consulta } from "@prisma/client";
 
 export default async function Sessoes() {

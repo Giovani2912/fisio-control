@@ -1,8 +1,7 @@
-import CreateButton from "./create-button";
 
 interface ITitle {
     title?: string;
-    createButton: boolean
+    createButton: React.ReactNode
 }
 
 const Title = ({ title, createButton }: ITitle) => {
@@ -11,7 +10,7 @@ const Title = ({ title, createButton }: ITitle) => {
             {createButton ? (
                 <div className="flex items-center justify-between mt-8 mb-4">
                     <h1 className="text-2xl font-bold text-gray-900">{title}</h1>
-                    <CreateButton text={`Cadastrar ${title}`} />
+                    {createButton}
                 </div >
             ) : (
                 <h1 className="text-4xl font-bold text-gray-800 mt-8 mb-4">

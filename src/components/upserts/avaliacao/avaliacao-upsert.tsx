@@ -1,11 +1,13 @@
+"use client";
+
 import { toast } from "sonner";
-import GenericUpsert from "./generic-upsert";
+import GenericUpsert from "../generic-upsert";
 import {
     avaliacaoSchema,
     AvaliacaoFormData,
     avaliacaoDefaultValues,
     avaliacaoFields
-} from "../upserts/upsert-config";
+} from "./config";
 // import { upsertAvaliacao } from "@/app/actions/upsertAvaliacao"; // Você precisará criar essa action
 
 interface UpsertAvaliacaoProps {

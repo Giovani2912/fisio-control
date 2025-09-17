@@ -2,10 +2,7 @@
 
 import { PlusIcon, PencilIcon } from "lucide-react";
 import { useState, ReactNode } from "react";
-import UpsertAvaliacao from "./avaliacao-upsert";
-import { AvaliacaoFormData, SessaoFormData } from "./upsert-config";
 import { Button } from "../ui/button";
-import UpsertSessao from "./sessao-upsert";
 
 // ===== BOTÃO DE CRIAR GENÉRICO =====
 interface GenericCreateButtonProps {
@@ -62,83 +59,3 @@ export function GenericEditButton<T>({
         </>
     );
 }
-
-// ===== BOTÕES ESPECÍFICOS (usando os genéricos) =====
-
-// Exemplo para avaliação
-
-interface CreateAvaliacaoButtonProps {
-    text?: string;
-}
-
-export const CreateAvaliacaoButton = ({ text = "Nova Avaliação" }: CreateAvaliacaoButtonProps) => {
-    return (
-        <GenericCreateButton text={text}>
-            {(isOpen, setIsOpen) => (
-                <UpsertAvaliacao
-                    isOpen={isOpen}
-                    setIsOpen={setIsOpen}
-                />
-            )}
-        </GenericCreateButton>
-    );
-};
-
-interface EditAvaliacaoButtonProps {
-    avaliacao: AvaliacaoFormData & { id: string };
-}
-
-export const EditAvaliacaoButton = ({ avaliacao }: EditAvaliacaoButtonProps) => {
-    return (
-        <GenericEditButton entity={avaliacao}>
-            {(isOpen, setIsOpen, entity) => (
-                <UpsertAvaliacao
-                    isOpen={isOpen}
-                    setIsOpen={setIsOpen}
-                    defaultValues={entity}
-                    avaliacaoId={entity.id}
-                />
-            )}
-        </GenericEditButton>
-    );
-};
-
-
-// ===== BOTÕES ESPECÍFICOS (usando os genéricos) =====
-
-// Exemplo para sessão
-interface CreateSessaoButtonProps {
-    text?: string;
-}
-
-export const CreateSessaoButton = ({ text = "Nova Sessão" }: CreateSessaoButtonProps) => {
-    return (
-        <GenericCreateButton text={text}>
-            {(isOpen, setIsOpen) => (
-                <UpsertSessao
-                    isOpen={isOpen}
-                    setIsOpen={setIsOpen}
-                />
-            )}
-        </GenericCreateButton>
-    );
-};
-
-interface EditSessaoButtonProps {
-    sessao: SessaoFormData & { id: string };
-}
-
-export const EditSessaoButton = ({ sessao }: EditSessaoButtonProps) => {
-    return (
-        <GenericEditButton entity={sessao}>
-            {(isOpen, setIsOpen, entity) => (
-                <UpsertSessao
-                    isOpen={isOpen}
-                    setIsOpen={setIsOpen}
-                    defaultValues={entity}
-                    sessaoId={entity.id}
-                />
-            )}
-        </GenericEditButton>
-    );
-};

@@ -1,4 +1,4 @@
-import { CreateAvaliacaoButton } from "@/components/upserts/generic-buttons";
+import { CreateAvaliacaoButton } from "@/components/upserts/avaliacao/avaliacao-buttons";
 
 export default async function PacienteInfo() {
     return (
