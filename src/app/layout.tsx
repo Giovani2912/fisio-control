@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 import './globals.css';
 import Navbar from '@/components/navbar';
+import Sidebar from '@/components/sidebar/sidebar';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -28,9 +29,16 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <Navbar />
+        <div className='min-h-screen bg-gradient-to-br from-blue-100 via-green-100 to-blue-200 lg:grid lg:grid-cols-[1fr_5fr]'>
+          <Sidebar />
+          <div className='lg:col-start-2'>
+            <Navbar />
+            <div className='py-4 px-6'>
+              {children}
 
-        {children}
+            </div>
+          </div>
+        </div>
       </body>
     </html>
   );

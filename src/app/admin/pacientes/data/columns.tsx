@@ -117,8 +117,8 @@ export const columns: ColumnDef<Paciente>[] = [
         header: "Email",
     },
     {
-        accessorKey: "telefone",
-        header: "Telefone",
+        accessorKey: "celular",
+        header: "Celular",
     },
     {
         accessorKey: "convenio",

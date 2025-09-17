@@ -18,6 +18,11 @@ interface UpsertPacienteParams {
     contato_emergencia: string;
 }
 
+interface SearchPacientesParams {
+    nome: string;
+    limit?: number;
+}
+
 export const upsertPaciente = async (params: UpsertPacienteParams) => {
     upsertPacienteSchema.parse(params);
 
@@ -41,3 +46,28 @@ export const deletePaciente = async (id: string) => {
     });
     revalidatePath("/admin/pacientes");
 }
+
+export const searchPacientesByName = async (nome: string) => {
+    if (!nome.trim() || nome.length < 3) {
+        return [];
+    }
+
+    try {
+        const pacientes = await db.paciente.findMany({
+            where: {
+                nome: {
+                    contains: nome,
+                    mode: 'insensitive'
+                }
+            },
+            orderBy: {
+                nome: 'asc'
+            },
+        });
+
+        return pacientes;
+    } catch (error) {
+        console.error('Erro ao buscar pacientes:', error);
+        return [];
+    }
+};

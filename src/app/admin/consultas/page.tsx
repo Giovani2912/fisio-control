@@ -23,13 +23,11 @@ export default async function Consultas() {
   return (
     <>
 
-      <MaxWidthWrapper>
-        <Title title="Consultas" />
+      <Title title="Consultas" createButton={true} />
 
-        <div className='mt-8 w-full bg-white rounded-2xl'>
-          <DataTable columns={columns} data={data} />
-        </div>
-      </MaxWidthWrapper>
+      <div className='mt-8 w-full bg-white rounded-2xl'>
+        <DataTable columns={columns} data={data} />
+      </div>
     </>
   );
 }

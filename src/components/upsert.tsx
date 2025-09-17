@@ -68,6 +68,10 @@ const formSchema = z.object({
     contato_emergencia: z.string().trim().min(1, {
         message: "O contato de emergência é obrigatório.",
     }),
+    criadoEm: z.string().optional(),
+    atualizadoEm: z.string().optional(),
+    id: z.string().optional(),
+    ativo: z.boolean().optional()
 });
 
 type FormSchema = z.infer<typeof formSchema>;
