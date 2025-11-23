@@ -8,6 +8,7 @@ import {
     avaliacaoDefaultValues,
     avaliacaoFields
 } from "./config";
+import { upsertAvaliacao } from "@/app/actions/upsertAvaliacao";
 // import { upsertAvaliacao } from "@/app/actions/upsertAvaliacao"; // Você precisará criar essa action
 
 interface UpsertAvaliacaoProps {
@@ -26,12 +27,11 @@ const UpsertAvaliacao = ({
 
     const handleSubmit = async (data: AvaliacaoFormData, isUpdate: boolean) => {
         try {
-            // await upsertAvaliacao(data);
-            // Simulando a chamada da API por enquanto
-            console.log("Salvando avaliação:", data);
+            await upsertAvaliacao({ ...data, id: avaliacaoId });
+            setIsOpen(false);
 
             toast.success(
-                isUpdate
+                avaliacaoId
                     ? "Avaliação atualizada com sucesso!"
                     : "Avaliação cadastrada com sucesso!"
             );

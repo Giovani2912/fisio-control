@@ -1,14 +1,13 @@
 import {
-    Menu,
     Home,
     Users,
     Calendar,
     FileText,
     Settings,
-    X,
     TimerIcon,
     Info,
-    MessageSquareText
+    MessageSquareText,
+    ArmchairIcon
 } from 'lucide-react'
 
 import { cn } from "@/lib/utils"
@@ -54,6 +53,11 @@ const menuItems = [
         href: '/admin/relatorios',
         icon: FileText,
         label: 'Relatórios'
+    },
+    {
+        href: '/admin/equipamentos',
+        icon: ArmchairIcon,
+        label: 'Equipamentos'
     },
     {
         href: '/configuracoes',

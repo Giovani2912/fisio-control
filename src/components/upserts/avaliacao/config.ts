@@ -2,31 +2,19 @@ import { TipoConsulta } from "@prisma/client";
 import { FormFieldConfig } from "../generic-upsert";
 import { z } from "zod";
 
-// ===== AVALIAÇÃO (exemplo) =====
 export const avaliacaoSchema = z.object({
-    titulo: z.string().trim().min(1, {
-        message: "O título é obrigatório.",
+    queixaPrincipal: z.string().trim().min(1, {
+        message: "A queixa principal é obrigatória.",
     }),
-    descricao: z.string().trim().min(1, {
-        message: "A descrição é obrigatória.",
-    }),
-    diagnostico: z.string().trim().min(1, {
-        message: "O diagnóstico é obrigatório.",
-    }),
-    condutas: z.string().trim().min(1, {
-        message: "O campo condutas é obrigatório.",
-    }),
-    objetivos: z.string().trim().min(1, {
-        message: "O campo objetivos é obrigatório.",
-    }),
-    data: z.string().trim().min(1, {
-        message: "A data é obrigatória.",
+    historiaDoenca: z.string().trim().optional(),
+    exameFisico: z.string().trim().optional(),
+    diagnostico: z.string().trim().optional(),
+    objetivos: z.string().trim().optional(),
+    data: z.date({
+        required_error: "A data é obrigatória.",
     }),
     pacienteId: z.string().trim().min(1, {
         message: "O paciente é obrigatório.",
-    }),
-    tipo: z.nativeEnum(TipoConsulta, {
-        message: "O tipo é obrigatório.",
     }),
     id: z.string().optional(),
 });
@@ -34,69 +22,66 @@ export const avaliacaoSchema = z.object({
 export type AvaliacaoFormData = z.infer<typeof avaliacaoSchema>;
 
 export const avaliacaoDefaultValues: AvaliacaoFormData = {
-    titulo: "",
-    descricao: "",
+    queixaPrincipal: "",
+    historiaDoenca: "",
+    exameFisico: "",
     diagnostico: "",
-    condutas: "",
     objetivos: "",
-    data: "",
+    data: new Date(),
     pacienteId: "",
-    tipo: "AVALIACAO",
 };
 
 export const avaliacaoFields: FormFieldConfig[] = [
     {
-        name: "titulo",
-        label: "Título",
-        type: "text",
-        placeholder: "Digite o título da avaliação...",
+        name: "queixaPrincipal",
+        label: "Queixa Principal",
+        type: "textarea",
+        placeholder: "Digite a queixa principal...",
         gridColumn: "full"
     },
     {
-        name: "descricao",
-        label: "Descrição",
+        name: "historiaDoenca",
+        label: "História da Doença",
         type: "textarea",
-        placeholder: "Digite a descrição da avaliação...",
+        placeholder: "Digite a história da doença...",
+        gridColumn: "full"
+    },
+    {
+        name: "exameFisico",
+        label: "Exame Físico",
+        type: "textarea",
+        placeholder: "Digite o exame físico...",
         gridColumn: "full"
     },
     {
         name: "diagnostico",
         label: "Diagnóstico",
         type: "textarea",
-        placeholder: "Digite o diagnóstico da avaliação...",
-        gridColumn: "full"
-    },
-    {
-        name: "condutas",
-        label: "Condutas",
-        type: "textarea",
-        placeholder: "Digite as condutas da avaliação...",
+        placeholder: "Digite o diagnóstico...",
         gridColumn: "full"
     },
     {
         name: "objetivos",
         label: "Objetivos",
         type: "textarea",
-        placeholder: "Digite os objetivos da avaliação...",
+        placeholder: "Digite os objetivos...",
         gridColumn: "full"
     },
     {
         name: "data",
         label: "Data",
-        type: "date", // você pode criar um campo de data customizado
+        type: "date",
         placeholder: "Digite a data...",
         gridColumn: "half"
     },
     {
-        name: "tipo",
-        label: "Tipo",
+        name: "pacienteId",
+        label: "Paciente",
         type: "select",
-        placeholder: "Selecione o tipo",
+        placeholder: "Selecione o paciente",
         options: [
-            { label: "Avaliação Inicial", value: TipoConsulta.AVALIACAO },
-            { label: "Retorno", value: TipoConsulta.RETORNO },
-            { label: "Sessão", value: TipoConsulta.SESSAO },
-            { label: "Reavaliação", value: TipoConsulta.REAVALIACAO },
+            { label: "Paciente 2", value: "cmic1g7780000l40cvc0cj8bm" },
+            { label: "Paciente 3", value: "cmic1g7780000l40cvc0cj8b" },
         ],
         gridColumn: "half"
     },

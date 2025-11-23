@@ -1,29 +1,18 @@
 import { z } from "zod";
 
 export const upsertAvaliacaoSchema = z.object({
-    titulo: z.string().trim().min(1, {
-        message: "O título é obrigatório.",
+    queixaPrincipal: z.string().trim().min(1, {
+        message: "A queixa principal é obrigatória.",
     }),
-    descricao: z.string().trim().min(1, {
-        message: "A descrição é obrigatória.",
-    }),
-    diagnostico: z.string().trim().min(1, {
-        message: "O diagnóstico é obrigatório.",
-    }),
-    condutas: z.string().trim().min(1, {
-        message: "O campo condutas é obrigatório.",
-    }),
-    objetivos: z.string().trim().min(1, {
-        message: "O campo objetivos é obrigatório.",
-    }),
-    data: z.string().trim().min(1, {
-        message: "A data é obrigatória.",
+    historiaDoenca: z.string().trim().optional(),
+    exameFisico: z.string().trim().optional(),
+    diagnostico: z.string().trim().optional(),
+    objetivos: z.string().trim().optional(),
+    data: z.coerce.date({
+        required_error: "A data é obrigatória.",
     }),
     pacienteId: z.string().trim().min(1, {
         message: "O paciente é obrigatório.",
-    }),
-    tipo: z.string().trim().min(1, {
-        message: "O tipo é obrigatório.",
     }),
     id: z.string().optional(),
 });

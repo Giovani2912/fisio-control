@@ -24,7 +24,7 @@ const UpsertPaciente = ({
     setIsOpen,
 }: UpsertPacienteProps) => {
 
-    const handleSubmit = async (data: PacienteFormData, isUpdate: boolean) => {
+    const handleSubmit = async (data: PacienteFormData) => {
         try {
             await upsertPaciente({ ...data, id: pacienteId });
             setIsOpen(false);
