@@ -18,11 +18,6 @@ interface UpsertPacienteParams {
   contato_emergencia: string;
 }
 
-interface SearchPacientesParams {
-  nome: string;
-  limit?: number;
-}
-
 export const upsertPaciente = async (params: UpsertPacienteParams) => {
   upsertPacienteSchema.parse(params);
 

@@ -15,7 +15,7 @@ export default function SearchInput({ initialSearch = '' }: SearchInputProps) {
   const [searchTerm, setSearchTerm] = useState(initialSearch);
   const [isLoading, setIsLoading] = useState(false);
 
-  const timeoutRef = useRef<NodeJS.Timeout>();
+  const timeoutRef = useRef<NodeJS.Timeout | undefined>(undefined);
 
   // Sincronizar o estado local quando os searchParams mudarem (navegação de página)
   useEffect(() => {

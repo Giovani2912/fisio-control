@@ -15,10 +15,10 @@ import SearchInput from '@/components/search';
 import { CreatePacienteButton } from '@/components/upserts/paciente/paciente-buttons';
 
 interface PacientesProps {
-  searchParams: {
+  searchParams: Promise<{
     page?: string;
     search?: string;
-  };
+  }>;
 }
 
 async function getData(
@@ -75,8 +75,9 @@ async function getData(
 }
 
 export default async function Pacientes({ searchParams }: PacientesProps) {
-  const currentPage = Number(searchParams.page) || 1;
-  const searchTerm = searchParams.search || '';
+  const { page: pageParam, search: searchParam } = await searchParams;
+  const currentPage = Number(pageParam) || 1;
+  const searchTerm = searchParam || '';
 
   const {
     data,

@@ -3,8 +3,8 @@
 // Exemplo para avaliação
 
 import { GenericCreateButton, GenericEditButton } from '../generic-buttons';
-import { AvaliacaoFormData } from '../upsert-config';
 import UpsertAvaliacao from './avaliacao-upsert';
+import { AvaliacaoFormData } from './config';
 
 interface CreateAvaliacaoButtonProps {
   text?: string;

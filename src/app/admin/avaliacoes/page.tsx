@@ -1,13 +1,12 @@
 import {
   CreateAvaliacaoButton,
-  EditAvaliacaoButton,
+  // EditAvaliacaoButton,
 } from '@/components/upserts/avaliacao/avaliacao-buttons';
-import { Avaliacao } from '@prisma/client';
 import { DataTable } from './data/data-table';
-import { columns } from './data/columns';
+import { columns, Paciente as AvaliacaoRow } from './data/columns';
 import prisma from '@/lib/prisma';
 
-async function getData(): Promise<Avaliacao[]> {
+async function getData(): Promise<AvaliacaoRow[]> {
   const data = await prisma.avaliacao
     .findMany({
       orderBy: { criadoEm: 'desc' },
@@ -17,10 +16,10 @@ async function getData(): Promise<Avaliacao[]> {
       avaliacoes.map(avaliacao => ({
         id: avaliacao.id,
         queixaPrincipal: avaliacao.queixaPrincipal,
-        historiaDoenca: avaliacao.historiaDoenca,
-        exameFisico: avaliacao.exameFisico,
-        diagnostico: avaliacao.diagnostico,
-        objetivos: avaliacao.objetivos,
+        historiaDoenca: avaliacao.historiaDoenca ?? '',
+        exameFisico: avaliacao.exameFisico ?? '',
+        diagnostico: avaliacao.diagnostico ?? '',
+        objetivos: avaliacao.objetivos ?? '',
         data: avaliacao.data.toISOString().split('T')[0], // Formata a data como 'YYYY-MM-DD'
         paciente: avaliacao.paciente.nome, // Acessa o nome do paciente relacionado
       })),
@@ -29,7 +28,7 @@ async function getData(): Promise<Avaliacao[]> {
 }
 
 export default async function Avaliacoes() {
-  const avaliacoes: Avaliacao[] = await getData();
+  const avaliacoes: AvaliacaoRow[] = await getData();
 
   return (
     <>

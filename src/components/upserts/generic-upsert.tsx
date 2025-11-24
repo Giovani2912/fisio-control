@@ -152,7 +152,9 @@ function GenericUpsert<T extends Record<string, any>>({
   const [internalLoading, setInternalLoading] = useState(false);
 
   const form = useForm<T>({
+    // @ts-ignore
     resolver: zodResolver(schema),
+    // @ts-ignore
     defaultValues,
   });
 
@@ -184,6 +186,7 @@ function GenericUpsert<T extends Record<string, any>>({
     return (
       <FormField
         key={name}
+        // @ts-ignore
         control={form.control}
         name={name as any}
         render={({ field: formField }) => (
@@ -221,6 +224,7 @@ function GenericUpsert<T extends Record<string, any>>({
 
         <Form {...form}>
           <form
+            // @ts-ignore
             onSubmit={form.handleSubmit(handleSubmit)}
             className="space-y-4"
           >

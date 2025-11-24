@@ -28,11 +28,11 @@ export const columns: ColumnDef<Paciente>[] = [
     accessorKey: 'data',
     header: 'Data',
   },
-  {
-    accessorKey: 'actions',
-    header: 'Ações',
-    cell: ({ row: { original: paciente } }) => {
-      return <div className="flex items-center space-x-1"></div>;
-    },
-  },
+  // {
+  //   accessorKey: 'actions',
+  //   header: 'Ações',
+  //   cell: ({ row: { original: paciente } }) => {
+  //     return <div className="flex items-center space-x-1"></div>;
+  //   },
+  // },
 ];

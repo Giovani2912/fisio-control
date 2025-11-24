@@ -1,7 +1,7 @@
 'use client';
 
 import { GenericCreateButton, GenericEditButton } from '../generic-buttons';
-import { SessaoFormData } from '../upsert-config';
+import { SessaoFormData } from './config';
 import UpsertSessao from './sessao-upsert';
 
 // Exemplo para sessão

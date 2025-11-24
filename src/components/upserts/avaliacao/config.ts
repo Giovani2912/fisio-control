@@ -11,7 +11,7 @@ export const avaliacaoSchema = z.object({
   diagnostico: z.string().trim().optional(),
   objetivos: z.string().trim().optional(),
   data: z.date({
-    required_error: 'A data é obrigatória.',
+    message: 'A data é obrigatória.',
   }),
   pacienteId: z.string().trim().min(1, {
     message: 'O paciente é obrigatório.',

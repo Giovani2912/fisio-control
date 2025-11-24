@@ -7,10 +7,11 @@ import { EditPacienteButton } from '@/components/upserts/paciente/paciente-butto
 export default async function PacienteInfo({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
+  const { id } = await params;
   const paciente = await prisma.paciente.findUnique({
-    where: { id: params.id },
+    where: { id },
     include: {
       avaliacoes: true,
       consultas: true,

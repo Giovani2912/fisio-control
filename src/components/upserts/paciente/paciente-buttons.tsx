@@ -2,7 +2,7 @@
 // ===== BOTÕES ESPECÍFICOS (usando os genéricos) =====
 
 import { GenericCreateButton, GenericEditButton } from '../generic-buttons';
-import { PacienteFormData } from '../upsert-config';
+import { PacienteFormData } from './config';
 import UpsertPaciente from './paciente-upsert';
 
 // Exemplo para paciente
