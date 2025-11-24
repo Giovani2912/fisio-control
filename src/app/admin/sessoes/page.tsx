@@ -14,3 +14,12 @@
 //     </>
 //   );
 // }
+import Title from '@/components/title';
+
+export default async function Sessoes() {
+  return (
+    <>
+      <Title title="Sessões" createButton={null} />
+    </>
+  );
+}

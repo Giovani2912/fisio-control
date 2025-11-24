@@ -3,7 +3,6 @@ import type {
   Consulta,
   Avaliacao,
   PlanoTratamento,
-  Prontuario,
   Pagamento,
 } from '@prisma/client';
 

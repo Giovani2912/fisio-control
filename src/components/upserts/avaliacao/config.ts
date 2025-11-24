@@ -1,4 +1,4 @@
-import { TipoConsulta } from '@prisma/client';
+// import { TipoConsulta } from '@prisma/client';
 import { FormFieldConfig } from '../generic-upsert';
 import { z } from 'zod';
 

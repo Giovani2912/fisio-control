@@ -1,4 +1,5 @@
 import { columns, Paciente } from './data/columns';
+import { Paciente as PacienteModel } from '@prisma/client';
 import { DataTable } from './data/data-table';
 import Title from '@/components/title';
 import prisma from '@/lib/prisma';
@@ -55,18 +56,18 @@ async function getData(
   const totalPages = Math.ceil(total / pageSize);
 
   return {
-    data: (data || []).map((p: any) => ({
+    data: (data || []).map((p: PacienteModel) => ({
       id: p.id,
       nome: p.nome,
       cpf: p.cpf,
-      rg: p.rg,
-      email: p.email,
+      rg: p.rg ?? null,
+      email: p.email ?? null,
       celular: p.celular,
       idade: p.idade,
       sexo: p.sexo,
-      convenio: p.convenio,
-      numeroConvenio: p.numeroConvenio,
-      contato_emergencia: p.contato_emergencia,
+      convenio: p.convenio ?? null,
+      numeroConvenio: p.numeroConvenio ?? null,
+      contato_emergencia: p.contato_emergencia ?? null,
     })),
     total,
     totalPages,
@@ -92,7 +93,7 @@ export default async function Pacientes({ searchParams }: PacientesProps) {
     const showPages = 5;
 
     let startPage = Math.max(1, page - Math.floor(showPages / 2));
-    let endPage = Math.min(totalPages, startPage + showPages - 1);
+    const endPage = Math.min(totalPages, startPage + showPages - 1);
 
     if (endPage - startPage < showPages - 1) {
       startPage = Math.max(1, endPage - showPages + 1);

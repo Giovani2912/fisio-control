@@ -17,7 +17,7 @@ import { Sexo, Convenios } from '@prisma/client';
 import { ColumnDef } from '@tanstack/react-table';
 import { List, TrashIcon } from 'lucide-react';
 import { toast } from 'sonner';
-import { EditPacienteButton } from '@/components/upserts/paciente/paciente-buttons';
+// import { EditPacienteButton } from '@/components/upserts/paciente/paciente-buttons';
 import Link from 'next/link';
 
 // This type is used to define the shape of our data.
@@ -26,14 +26,14 @@ export type Paciente = {
   id: string;
   nome: string;
   cpf: string;
-  rg: string;
-  email: string;
+  rg: string | null;
+  email: string | null;
   celular: string;
-  idade: number | undefined;
+  idade: string;
   sexo: Sexo;
-  convenio: Convenios;
-  numeroConvenio: string;
-  contato_emergencia: string;
+  convenio: Convenios | null;
+  numeroConvenio: string | null;
+  contato_emergencia: string | null;
 };
 
 // Componente separado para o Dialog de exclusão

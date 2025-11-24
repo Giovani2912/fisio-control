@@ -57,7 +57,7 @@ export interface FormFieldConfig {
 }
 
 // Props do componente genérico
-interface GenericUpsertProps<T extends Record<string, any>> {
+interface GenericUpsertProps<T extends Record<string, unknown>> {
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
   title: string;
@@ -72,14 +72,19 @@ interface GenericUpsertProps<T extends Record<string, any>> {
 
 const renderFormControl = (
   type: string,
-  formField: any,
+  formField: Record<string, unknown>,
   placeholder?: string,
   options?: Array<{ value: string; label: string }>,
 ) => {
   switch (type) {
     case 'select':
       return (
-        <Select onValueChange={formField.onChange} value={formField.value}>
+        <Select
+          // @ts-expect-error RHF provides string value and handler for selects
+          onValueChange={formField.onChange}
+          // @ts-expect-error RHF field value is string for selects
+          value={formField.value}
+        >
           <SelectTrigger>
             <SelectValue placeholder={placeholder} />
           </SelectTrigger>
@@ -115,6 +120,7 @@ const renderFormControl = (
             >
               <CalendarIcon className="mr-2 h-4 w-4" />
               {formField.value ? (
+                // @ts-expect-error RHF field value is Date for date inputs
                 format(formField.value, 'dd/MM/yyyy')
               ) : (
                 <span>{placeholder || 'Selecione uma data'}</span>
@@ -124,7 +130,9 @@ const renderFormControl = (
           <PopoverContent className="w-auto p-0">
             <Calendar
               mode="single"
+              // @ts-expect-error RHF field value is Date for date inputs
               selected={formField.value}
+              // @ts-expect-error RHF change handler accepts Date
               onSelect={formField.onChange}
               initialFocus
             />
@@ -137,7 +145,7 @@ const renderFormControl = (
   }
 };
 
-function GenericUpsert<T extends Record<string, any>>({
+function GenericUpsert<T extends Record<string, unknown>>({
   isOpen,
   setIsOpen,
   title,
@@ -152,9 +160,9 @@ function GenericUpsert<T extends Record<string, any>>({
   const [internalLoading, setInternalLoading] = useState(false);
 
   const form = useForm<T>({
-    // @ts-ignore
+    // @ts-expect-error zod + react-hook-form generic mismatch is safe at runtime
     resolver: zodResolver(schema),
-    // @ts-ignore
+    // @ts-expect-error defaultValues generic narrowing is safe for controlled form
     defaultValues,
   });
 
@@ -186,9 +194,10 @@ function GenericUpsert<T extends Record<string, any>>({
     return (
       <FormField
         key={name}
-        // @ts-ignore
+        // @ts-expect-error FieldPath typing is ensured by schema and config
         control={form.control}
-        name={name as any}
+        // @ts-expect-error Name maps to FieldPath<T> through config
+        name={name}
         render={({ field: formField }) => (
           <FormItem
             className={field.gridColumn === 'full' ? 'md:col-span-2' : ''}
@@ -224,7 +233,7 @@ function GenericUpsert<T extends Record<string, any>>({
 
         <Form {...form}>
           <form
-            // @ts-ignore
+            // @ts-expect-error Submit handler types align structurally
             onSubmit={form.handleSubmit(handleSubmit)}
             className="space-y-4"
           >

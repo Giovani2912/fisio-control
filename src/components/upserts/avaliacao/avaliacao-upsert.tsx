@@ -24,7 +24,7 @@ const UpsertAvaliacao = ({
   avaliacaoId,
   setIsOpen,
 }: UpsertAvaliacaoProps) => {
-  const handleSubmit = async (data: AvaliacaoFormData, isUpdate: boolean) => {
+  const handleSubmit = async (data: AvaliacaoFormData) => {
     try {
       await upsertAvaliacao({ ...data, id: avaliacaoId });
       setIsOpen(false);

@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Input } from '@/components/ui/input';
 import { Search } from 'lucide-react';
@@ -15,7 +15,7 @@ export default function SearchInput({ initialSearch = '' }: SearchInputProps) {
   const [searchTerm, setSearchTerm] = useState(initialSearch);
   const [isLoading, setIsLoading] = useState(false);
 
-  const timeoutRef = useRef<NodeJS.Timeout | undefined>(undefined);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   // Sincronizar o estado local quando os searchParams mudarem (navegação de página)
   useEffect(() => {
@@ -23,9 +23,28 @@ export default function SearchInput({ initialSearch = '' }: SearchInputProps) {
     if (currentSearch !== searchTerm) {
       setSearchTerm(currentSearch);
     }
-  }, [searchParams]);
+  }, [searchParams, searchTerm]);
 
   // Busca automática com debounce (sem precisar Enter)
+  const performSearch = useCallback(
+    (term: string, resetPage: boolean = true) => {
+      const params = new URLSearchParams(searchParams.toString());
+
+      if (term.trim()) {
+        params.set('search', term.trim());
+      } else {
+        params.delete('search');
+      }
+
+      if (resetPage) {
+        params.set('page', '1');
+      }
+
+      router.push(`/admin/pacientes?${params.toString()}`);
+    },
+    [router, searchParams],
+  );
+
   useEffect(() => {
     const currentSearch = searchParams.get('search') || '';
 
@@ -56,9 +75,10 @@ export default function SearchInput({ initialSearch = '' }: SearchInputProps) {
     return () => {
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
+        timeoutRef.current = null;
       }
     };
-  }, [searchTerm, searchParams]);
+  }, [searchTerm, searchParams, performSearch]);
 
   // Fechar sugestões ao clicar fora - REMOVIDO (não há mais dropdown)
 
@@ -66,9 +86,7 @@ export default function SearchInput({ initialSearch = '' }: SearchInputProps) {
     setSearchTerm(e.target.value);
   };
 
-  const handleSelectSuggestion = (nome: string) => {
-    // REMOVIDO - não há mais sugestões
-  };
+  // Sugestões removidas
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -78,26 +96,7 @@ export default function SearchInput({ initialSearch = '' }: SearchInputProps) {
     }
   };
 
-  const performSearch = (term: string, resetPage: boolean = true) => {
-    const params = new URLSearchParams(searchParams.toString());
-
-    if (term.trim()) {
-      params.set('search', term.trim());
-    } else {
-      params.delete('search');
-    }
-
-    // Só resetar para página 1 se for uma nova busca (não navegação de página)
-    if (resetPage) {
-      params.set('page', '1');
-    }
-
-    router.push(`/admin/pacientes?${params.toString()}`);
-  };
-
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    // Não há mais dropdown para fechar
-  };
+  const handleKeyDown = () => {};
 
   return (
     <div className="relative mt-4">
