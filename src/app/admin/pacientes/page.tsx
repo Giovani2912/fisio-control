@@ -1,5 +1,5 @@
-import { columns, Paciente } from "./data/columns"
-import { DataTable } from "./data/data-table"
+import { columns, Paciente } from './data/columns';
+import { DataTable } from './data/data-table';
 import Title from '@/components/title';
 import prisma from '@/lib/prisma';
 import {
@@ -10,7 +10,7 @@ import {
   PaginationLink,
   PaginationNext,
   PaginationPrevious,
-} from "@/components/ui/pagination"
+} from '@/components/ui/pagination';
 import SearchInput from '@/components/search';
 import { CreatePacienteButton } from '@/components/upserts/paciente/paciente-buttons';
 
@@ -18,10 +18,13 @@ interface PacientesProps {
   searchParams: {
     page?: string;
     search?: string;
-  }
+  };
 }
 
-async function getData(page: number = 1, search?: string): Promise<{
+async function getData(
+  page: number = 1,
+  search?: string,
+): Promise<{
   data: Paciente[];
   total: number;
   totalPages: number;
@@ -31,11 +34,11 @@ async function getData(page: number = 1, search?: string): Promise<{
   const pageSize = 10;
   const skip = (page - 1) * pageSize;
 
-  const whereCondition = search ? {
-    OR: [
-      { nome: { contains: search, mode: 'insensitive' as const } },
-    ],
-  } : {};
+  const whereCondition = search
+    ? {
+        OR: [{ nome: { contains: search, mode: 'insensitive' as const } }],
+      }
+    : {};
 
   const [data, total] = await Promise.all([
     prisma.paciente.findMany({
@@ -75,7 +78,12 @@ export default async function Pacientes({ searchParams }: PacientesProps) {
   const currentPage = Number(searchParams.page) || 1;
   const searchTerm = searchParams.search || '';
 
-  const { data, total, totalPages, currentPage: page } = await getData(currentPage, searchTerm);
+  const {
+    data,
+    total,
+    totalPages,
+    currentPage: page,
+  } = await getData(currentPage, searchTerm);
 
   // Gerar links de paginação (seu código atual)
   const generatePageNumbers = () => {
@@ -106,24 +114,30 @@ export default async function Pacientes({ searchParams }: PacientesProps) {
       <SearchInput initialSearch={searchTerm} />
 
       {/* Informações da paginação */}
-      <div className='mt-4 text-sm text-muted-foreground font-bold'>
+      <div className="text-muted-foreground mt-4 text-sm font-bold">
         Mostrando {data.length} de {total} pacientes
         {searchTerm && ` (filtrados por "${searchTerm}")`}
       </div>
 
       {/* Tabela de dados */}
-      <div className='mt-4 w-full bg-white rounded-2xl'>
+      <div className="mt-4 w-full rounded-2xl bg-white">
         <DataTable columns={columns} data={data} />
 
         {/* Sua paginação atual permanece igual... */}
         {totalPages > 1 && (
-          <div className='p-4'>
+          <div className="p-4">
             <Pagination>
               <PaginationContent>
                 <PaginationItem>
                   <PaginationPrevious
-                    href={page > 1 ? `?page=${page - 1}${searchTerm ? `&search=${encodeURIComponent(searchTerm)}` : ''}` : '#'}
-                    className={page <= 1 ? 'pointer-events-none opacity-50' : ''}
+                    href={
+                      page > 1
+                        ? `?page=${page - 1}${searchTerm ? `&search=${encodeURIComponent(searchTerm)}` : ''}`
+                        : '#'
+                    }
+                    className={
+                      page <= 1 ? 'pointer-events-none opacity-50' : ''
+                    }
                   />
                 </PaginationItem>
 
@@ -144,7 +158,7 @@ export default async function Pacientes({ searchParams }: PacientesProps) {
                   </>
                 )}
 
-                {pageNumbers.map((pageNum) => (
+                {pageNumbers.map(pageNum => (
                   <PaginationItem key={pageNum}>
                     <PaginationLink
                       href={`?page=${pageNum}${searchTerm ? `&search=${encodeURIComponent(searchTerm)}` : ''}`}
@@ -174,8 +188,14 @@ export default async function Pacientes({ searchParams }: PacientesProps) {
 
                 <PaginationItem>
                   <PaginationNext
-                    href={page < totalPages ? `?page=${page + 1}${searchTerm ? `&search=${encodeURIComponent(searchTerm)}` : ''}` : '#'}
-                    className={page >= totalPages ? 'pointer-events-none opacity-50' : ''}
+                    href={
+                      page < totalPages
+                        ? `?page=${page + 1}${searchTerm ? `&search=${encodeURIComponent(searchTerm)}` : ''}`
+                        : '#'
+                    }
+                    className={
+                      page >= totalPages ? 'pointer-events-none opacity-50' : ''
+                    }
                   />
                 </PaginationItem>
               </PaginationContent>

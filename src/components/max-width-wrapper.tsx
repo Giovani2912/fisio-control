@@ -18,7 +18,6 @@ const MaxWidthWrapper = ({ className, children }: IMaxWidthWrapper) => {
         {children}
       </div>
     </div>
-
   );
 };
 
