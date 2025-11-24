@@ -2,13 +2,14 @@
 
 import { useState } from "react"
 import { deletePaciente } from "@/app/actions/upsertPaciente"
-import { Button } from "@/components/ui/button"
+import { Button, buttonVariants } from "@/components/ui/button"
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Sexo, Convenios } from "@prisma/client"
 import { ColumnDef } from "@tanstack/react-table"
-import { Pen, TrashIcon } from "lucide-react"
+import { List, TrashIcon } from "lucide-react"
 import { toast } from "sonner"
 import { EditPacienteButton } from "@/components/upserts/paciente/paciente-buttons"
+import Link from "next/link"
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
@@ -130,7 +131,14 @@ export const columns: ColumnDef<Paciente>[] = [
         cell: ({ row: { original: paciente } }) => {
             return (
                 <div className="flex items-center space-x-1">
-                    <EditPacienteButton paciente={paciente} />
+                    <Link href={`/admin/pacientes/${paciente.id}`} className={buttonVariants({
+                        size: 'icon',
+                        variant: 'outline',
+                        className: 'text-foreground hover:text-foreground/90 transition-colors'
+                    })}>
+                        <List className="h-4 w-4 text-foreground" />
+                    </Link>
+                    {/* <EditPacienteButton paciente={paciente} /> */}
                     <DeletePacienteDialog paciente={paciente} />
                 </div>
             );
