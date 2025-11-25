@@ -1,6 +1,7 @@
 'use client';
 
 import { toast } from 'sonner';
+import { useParams } from 'next/navigation';
 import GenericUpsert from '../generic-upsert';
 import {
   avaliacaoSchema,
@@ -9,7 +10,6 @@ import {
   avaliacaoFields,
 } from './config';
 import { upsertAvaliacao } from '@/app/actions/upsertAvaliacao';
-// import { upsertAvaliacao } from "@/app/actions/upsertAvaliacao"; // Você precisará criar essa action
 
 interface UpsertAvaliacaoProps {
   isOpen: boolean;
@@ -24,9 +24,16 @@ const UpsertAvaliacao = ({
   avaliacaoId,
   setIsOpen,
 }: UpsertAvaliacaoProps) => {
+  const params = useParams();
+  const pacienteId = params.id as string; // Pega o ID do paciente da URL
+
   const handleSubmit = async (data: AvaliacaoFormData) => {
     try {
-      await upsertAvaliacao({ ...data, id: avaliacaoId });
+      await upsertAvaliacao({
+        ...data,
+        id: avaliacaoId,
+        pacienteId, // Adiciona o pacienteId da URL
+      });
       setIsOpen(false);
 
       toast.success(

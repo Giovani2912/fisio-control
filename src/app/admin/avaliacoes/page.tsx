@@ -1,7 +1,3 @@
-import {
-  CreateAvaliacaoButton,
-  // EditAvaliacaoButton,
-} from '@/components/upserts/avaliacao/avaliacao-buttons';
 import { DataTable } from './data/data-table';
 import { columns, Paciente as AvaliacaoRow } from './data/columns';
 import prisma from '@/lib/prisma';
@@ -35,7 +31,6 @@ export default async function Avaliacoes() {
       <div className="mt-8 w-full rounded-2xl">
         <div className="mb-4 flex items-center justify-between">
           <h1 className="text-2xl font-bold text-gray-900">Avaliações</h1>
-          <CreateAvaliacaoButton text="Cadastrar Avaliação" />
         </div>
 
         <div className="mt-4 w-full space-y-2 rounded-2xl bg-white">

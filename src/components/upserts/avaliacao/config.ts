@@ -1,4 +1,3 @@
-// import { TipoConsulta } from '@prisma/client';
 import { FormFieldConfig } from '../generic-upsert';
 import { z } from 'zod';
 
@@ -13,9 +12,6 @@ export const avaliacaoSchema = z.object({
   data: z.date({
     message: 'A data é obrigatória.',
   }),
-  pacienteId: z.string().trim().min(1, {
-    message: 'O paciente é obrigatório.',
-  }),
   id: z.string().optional(),
 });
 
@@ -28,7 +24,6 @@ export const avaliacaoDefaultValues: AvaliacaoFormData = {
   diagnostico: '',
   objetivos: '',
   data: new Date(),
-  pacienteId: '',
 };
 
 export const avaliacaoFields: FormFieldConfig[] = [
@@ -72,17 +67,6 @@ export const avaliacaoFields: FormFieldConfig[] = [
     label: 'Data',
     type: 'date',
     placeholder: 'Digite a data...',
-    gridColumn: 'half',
-  },
-  {
-    name: 'pacienteId',
-    label: 'Paciente',
-    type: 'select',
-    placeholder: 'Selecione o paciente',
-    options: [
-      { label: 'Paciente 2', value: 'cmic1g7780000l40cvc0cj8bm' },
-      { label: 'Paciente 3', value: 'cmic1g7780000l40cvc0cj8b' },
-    ],
-    gridColumn: 'half',
+    gridColumn: 'full',
   },
 ];

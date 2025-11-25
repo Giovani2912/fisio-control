@@ -1,7 +1,6 @@
 import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 import './globals.css';
-import Navbar from '@/components/navbar';
 import Sidebar from '@/components/sidebar/sidebar';
 import { Toaster } from '@/components/ui/sonner';
 const geistSans = Geist({
@@ -32,7 +31,7 @@ export default function RootLayout({
         <div className="min-h-screen bg-[#f1f1f1] lg:grid lg:grid-cols-[1fr_7fr]">
           <Sidebar />
           <div className="lg:col-start-2">
-            <Navbar />
+            {/* <Navbar /> */}
             <div className="px-6 py-4">{children}</div>
           </div>
         </div>

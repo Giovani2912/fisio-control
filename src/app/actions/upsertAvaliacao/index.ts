@@ -44,7 +44,9 @@ export const upsertAvaliacao = async (params: UpsertAvaliacaoParams) => {
     });
   }
 
+  // Revalida tanto a página de avaliações quanto a do paciente específico
   revalidatePath('/admin/avaliacoes');
+  revalidatePath(`/admin/pacientes/${validatedData.pacienteId}`);
 };
 
 export const deleteAvaliacao = async (id: string) => {

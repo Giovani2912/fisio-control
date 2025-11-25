@@ -1,13 +1,13 @@
 import {
   Home,
   Users,
-  Calendar,
-  FileText,
-  Settings,
-  TimerIcon,
+  // Calendar,
+  // FileText,
+  // Settings,
+  // TimerIcon,
   Info,
-  MessageSquareText,
-  ArmchairIcon,
+  // MessageSquareText,
+  // ArmchairIcon,
 } from 'lucide-react';
 
 import { cn } from '@/lib/utils';
@@ -34,36 +34,36 @@ const menuItems = [
     icon: Info,
     label: 'Avaliações',
   },
-  {
-    href: '/admin/sessoes',
-    icon: MessageSquareText,
-    label: 'Sessões',
-  },
-  {
-    href: '/admin/consultas',
-    icon: Calendar,
-    label: 'Consultas',
-  },
-  {
-    href: '/admin/horarios',
-    icon: TimerIcon,
-    label: 'Horários',
-  },
-  {
-    href: '/admin/relatorios',
-    icon: FileText,
-    label: 'Relatórios',
-  },
-  {
-    href: '/admin/equipamentos',
-    icon: ArmchairIcon,
-    label: 'Equipamentos',
-  },
-  {
-    href: '/configuracoes',
-    icon: Settings,
-    label: 'Configurações',
-  },
+  // {
+  //   href: '/admin/sessoes',
+  //   icon: MessageSquareText,
+  //   label: 'Sessões',
+  // },
+  // {
+  //   href: '/admin/consultas',
+  //   icon: Calendar,
+  //   label: 'Consultas',
+  // },
+  // {
+  //   href: '/admin/horarios',
+  //   icon: TimerIcon,
+  //   label: 'Horários',
+  // },
+  // {
+  //   href: '/admin/relatorios',
+  //   icon: FileText,
+  //   label: 'Relatórios',
+  // },
+  // {
+  //   href: '/admin/equipamentos',
+  //   icon: ArmchairIcon,
+  //   label: 'Equipamentos',
+  // },
+  // {
+  //   href: '/configuracoes',
+  //   icon: Settings,
+  //   label: 'Configurações',
+  // },
 ];
 export default function SidebarContent({
   pathname,
