@@ -37,8 +37,8 @@ async function getData(
 
   const whereCondition = search
     ? {
-        OR: [{ nome: { contains: search, mode: 'insensitive' as const } }],
-      }
+      OR: [{ nome: { contains: search, mode: 'insensitive' as const } }],
+    }
     : {};
 
   const [data, total] = await Promise.all([
@@ -123,7 +123,17 @@ export default async function Pacientes({ searchParams }: PacientesProps) {
 
       {/* Tabela de dados */}
       <div className="mt-4 w-full rounded-2xl bg-white">
-        <DataTable columns={columns} data={data} />
+        <DataTable
+          columns={columns}
+          data={data.map((p) => ({
+            ...p,
+            rg: p.rg ?? '',
+            email: p.email ?? '',
+            convenio: p.convenio ?? 'HAOC',
+            numeroConvenio: p.numeroConvenio ?? '',
+            contato_emergencia: p.contato_emergencia ?? '',
+          }))}
+        />
 
         {/* Sua paginação atual permanece igual... */}
         {totalPages > 1 && (

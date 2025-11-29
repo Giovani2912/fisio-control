@@ -50,8 +50,9 @@ export const upsertAvaliacao = async (params: UpsertAvaliacaoParams) => {
 };
 
 export const deleteAvaliacao = async (id: string) => {
-  await db.avaliacao.delete({
+  // Revalida a página do paciente específico
+  const deleted = await db.avaliacao.delete({
     where: { id },
   });
-  revalidatePath('/admin/avaliacoes');
+  revalidatePath(`/admin/pacientes/${deleted.pacienteId}`);
 };

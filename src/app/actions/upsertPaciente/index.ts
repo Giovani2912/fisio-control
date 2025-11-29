@@ -36,9 +36,14 @@ export const upsertPaciente = async (params: UpsertPacienteParams) => {
 };
 
 export const deletePaciente = async (id: string) => {
+  await db.avaliacao.deleteMany({
+    where: { pacienteId: id },
+  });
+
   await db.paciente.delete({
     where: { id },
   });
+
   revalidatePath('/admin/pacientes');
 };
 

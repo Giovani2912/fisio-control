@@ -44,6 +44,7 @@ export const pacienteSchema = z.object({
 export type PacienteFormData = z.infer<typeof pacienteSchema>;
 
 export const pacienteDefaultValues: PacienteFormData = {
+  id: '',
   nome: '',
   cpf: '',
   rg: '',

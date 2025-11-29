@@ -11,9 +11,9 @@ async function main() {
   const pacientes = await Promise.all([
     prisma.paciente.create({
       data: {
-        nome: 'Rengoku Silva Santos',
-        cpf: '12134561127810901',
-        rg: 'MG1234567',
+        nome: 'Obito Silva Santos',
+        cpf: '121345611278109012',
+        rg: 'MG12345671',
         email: 'maria.santos@email.com',
         celular: '(31) 99999-1111',
         idade: '45',
@@ -26,9 +26,9 @@ async function main() {
 
     prisma.paciente.create({
       data: {
-        nome: 'Nezuko Eduardo Lima',
-        cpf: '9812761514321010',
-        rg: 'SP9876543',
+        nome: 'Minato Eduardo Lima',
+        cpf: '98127615143210120',
+        rg: 'SP98765431',
         email: 'carlos.lima@email.com',
         celular: '(11) 88888-3333',
         idade: '32',
@@ -41,9 +41,9 @@ async function main() {
 
     prisma.paciente.create({
       data: {
-        nome: 'Inosuke Oliveira',
-        cpf: '4567891112300121',
-        rg: 'RJ45678911',
+        nome: 'Kakashi Oliveira',
+        cpf: '45678911123001211',
+        rg: 'RJ456782911',
         email: 'ana.oliveira@email.com',
         celular: '(21) 77777-5555',
         idade: '28',
@@ -56,9 +56,9 @@ async function main() {
 
     prisma.paciente.create({
       data: {
-        nome: 'Zenitsu Ferreira Costa',
-        cpf: '7891123324560110',
-        rg: 'BA7891234',
+        nome: 'Sasuke Ferreira Costa',
+        cpf: '78911213324560110',
+        rg: 'BA78912234',
         email: 'roberto.costa@email.com',
         celular: '(71) 66666-7777',
         idade: '58',
@@ -71,9 +71,9 @@ async function main() {
 
     prisma.paciente.create({
       data: {
-        nome: 'Tanjiro Rodrigues Alves',
-        cpf: '3216154987011230',
-        rg: 'PR3216549',
+        nome: 'Naruto Rodrigues Alves',
+        cpf: '32161542987011230',
+        rg: 'PR32165149',
         email: 'juliana.alves@email.com',
         celular: '(41) 55555-9999',
         idade: '35',

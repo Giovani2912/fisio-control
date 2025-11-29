@@ -1,8 +1,9 @@
 import prisma from '@/lib/prisma';
 import Title from '@/components/title';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { CreateAvaliacaoButton } from '@/components/upserts/avaliacao/avaliacao-buttons';
+import { CreateAvaliacaoButton, EditAvaliacaoButton } from '@/components/upserts/avaliacao/avaliacao-buttons';
 import { EditPacienteButton } from '@/components/upserts/paciente/paciente-buttons';
+import { DeleteAvaliacaoDialog } from '../../avaliacoes/components/delete-dialog';
 
 export default async function PacienteInfo({
   params,
@@ -35,7 +36,7 @@ export default async function PacienteInfo({
       <div className="mt-8 mb-4 flex items-center justify-between">
         <h1 className="text-2xl font-bold text-gray-900">{paciente.nome}</h1>
         <div className="flex gap-2">
-          <CreateAvaliacaoButton text="Cadastrar Avaliação" />
+
           <EditPacienteButton
             paciente={{
               id: paciente.id,
@@ -57,7 +58,24 @@ export default async function PacienteInfo({
       <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
         <Card className="md:col-span-2">
           <CardHeader>
-            <CardTitle>Dados do Paciente</CardTitle>
+            <CardTitle className='flex items-center justify-between'>Dados do Paciente
+
+              <EditPacienteButton
+                paciente={{
+                  id: paciente.id,
+                  nome: paciente.nome,
+                  cpf: paciente.cpf,
+                  rg: paciente.rg || '',
+                  email: paciente.email || '',
+                  celular: paciente.celular,
+                  idade: String(paciente.idade),
+                  sexo: paciente.sexo,
+                  convenio: paciente.convenio ?? 'HAOC',
+                  numeroConvenio: paciente.numeroConvenio || '',
+                  contato_emergencia: paciente.contato_emergencia || '',
+                }}
+              />
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
@@ -158,34 +176,90 @@ export default async function PacienteInfo({
         </Card>
       </div>
 
-      <Card className="mt-6 md:col-span-2">
-        <CardHeader>
-          <CardTitle>Avaliações</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-3">
-            {paciente.avaliacoes.map(avaliacao => (
-              <div
-                key={avaliacao.id}
-                className="rounded-md border border-gray-200 p-4"
-              >
-                <div className="text-muted-foreground text-sm">Data</div>
-                <div className="font-medium">
-                  {avaliacao.data?.toLocaleDateString() || '-'}
-                </div>
+      <div className="mt-6 grid grid-cols-1 gap-6 md:grid-cols-2 ">
+        <Card className=" md:col-span-1">
+          <CardHeader>
+            <CardTitle className='flex items-center justify-between'>Evolução</CardTitle>
+            <CardContent>Building...</CardContent>
+          </CardHeader>
+        </Card>
 
-                <div className="text-muted-foreground text-sm">Diagnóstico</div>
-                <div className="font-medium">
-                  {avaliacao.diagnostico || '-'}
-                </div>
+        <Card>
 
-                <div className="text-muted-foreground text-sm">Objetivos</div>
-                <div className="font-medium">{avaliacao.objetivos || '-'}</div>
-              </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
+          <CardHeader>
+            <CardTitle className='flex items-center justify-between'>Avaliação inicial
+              <CreateAvaliacaoButton text="Cadastrar Avaliação" />
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              {paciente.avaliacoes.map(avaliacao => (
+                <div
+                  key={avaliacao.id}
+                  className="rounded-md border border-gray-200 p-4 relative flex flex-col gap-3"
+                >
+                  <div className="absolute top-2 right-2 flex gap-2">
+                    <EditAvaliacaoButton
+                      avaliacao={{
+                        id: avaliacao.id,
+                        data: avaliacao.data,
+                        historiaDoenca: avaliacao.historiaDoenca ?? undefined,
+                        queixaPrincipal: avaliacao.queixaPrincipal,
+                        exameFisico: avaliacao.exameFisico ?? undefined,
+                        diagnostico: avaliacao.diagnostico ?? undefined,
+                        objetivos: avaliacao.objetivos ?? undefined,
+                      }}
+                    />
+
+                    <DeleteAvaliacaoDialog
+                      avaliacao={{
+                        id: avaliacao.id,
+                        data: avaliacao.data,
+                        queixaPrincipal: avaliacao.queixaPrincipal,
+                        historiaDoenca: avaliacao.historiaDoenca ?? undefined,
+                        exameFisico: avaliacao.exameFisico ?? undefined,
+                        diagnostico: avaliacao.diagnostico ?? undefined,
+                        objetivos: avaliacao.objetivos ?? undefined,
+                      }}
+                    />
+                  </div>
+                  <div className="text-muted-foreground text-sm">Data</div>
+                  <div className="font-medium">
+                    {avaliacao.data?.toLocaleDateString() || '-'}
+                  </div>
+                  <hr className="border-gray-200" />
+
+                  <div className="text-muted-foreground text-sm">Queixa Principal</div>
+                  <div className="font-medium">
+                    {avaliacao.queixaPrincipal || '-'}
+                  </div>
+                  <hr className="border-gray-200" />
+
+                  <div className="text-muted-foreground text-sm">História da Doença</div>
+                  <div className="font-medium">
+                    {avaliacao.historiaDoenca || '-'}
+                  </div>
+                  <hr className="border-gray-200" />
+
+                  <div className="text-muted-foreground text-sm">Exame Físico</div>
+                  <div className="font-medium">
+                    {avaliacao.exameFisico || '-'}
+                  </div>
+                  <hr className="border-gray-200" />
+
+                  <div className="text-muted-foreground text-sm">Diagnóstico</div>
+                  <div className="font-medium">
+                    {avaliacao.diagnostico || '-'}
+                  </div>
+                  <hr className="border-gray-200" />
+                  <div className="text-muted-foreground text-sm">Objetivos</div>
+                  <div className="font-medium">{avaliacao.objetivos || '-'}</div>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      </div>
     </>
   );
 }
