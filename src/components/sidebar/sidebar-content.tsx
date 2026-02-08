@@ -21,7 +21,7 @@ interface SidebarContentProps {
 }
 const menuItems = [
   {
-    href: '/',
+    href: '/admin',
     icon: Home,
     label: 'Dashboard',
   },

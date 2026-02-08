@@ -1,6 +1,6 @@
 interface ITitle {
   title?: string;
-  createButton: React.ReactNode;
+  createButton?: React.ReactNode;
 }
 
 const Title = ({ title, createButton }: ITitle) => {
@@ -12,7 +12,7 @@ const Title = ({ title, createButton }: ITitle) => {
           {createButton}
         </div>
       ) : (
-        <h1 className="mt-8 mb-4 text-4xl font-bold text-gray-800">{title}</h1>
+        <h1 className="mt-8 mb-4 text-2xl font-bold text-gray-800">{title}</h1>
       )}
     </>
   );

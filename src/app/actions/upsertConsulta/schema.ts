@@ -1,0 +1,22 @@
+import { StatusConsulta, TipoConsulta } from '@prisma/client';
+import { z } from 'zod';
+
+export const upsertConsultaSchema = z.object({
+  id: z.string().optional(),
+  data: z.date({
+    message: 'A data é obrigatória.',
+  }),
+  horaInicio: z.date({
+    message: 'A hora de início é obrigatória.',
+  }),
+  horaFim: z.date({
+    message: 'A hora de fim é obrigatória.',
+  }),
+  tipo: z.nativeEnum(TipoConsulta).optional(),
+  status: z.nativeEnum(StatusConsulta).optional(),
+  observacoes: z.string().trim().optional(),
+  valorConsulta: z.number().optional(),
+  paciente: z.string().trim().min(1, {
+    message: 'O paciente é obrigatório.',
+  }),
+});
