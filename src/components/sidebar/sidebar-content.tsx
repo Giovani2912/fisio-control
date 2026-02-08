@@ -6,6 +6,7 @@ import {
   // Settings,
   // TimerIcon,
   Info,
+  Calendar,
   // MessageSquareText,
   // ArmchairIcon,
 } from 'lucide-react';
@@ -39,11 +40,11 @@ const menuItems = [
   //   icon: MessageSquareText,
   //   label: 'Sessões',
   // },
-  // {
-  //   href: '/admin/consultas',
-  //   icon: Calendar,
-  //   label: 'Consultas',
-  // },
+  {
+    href: '/admin/consultas',
+    icon: Calendar,
+    label: 'Consultas',
+  },
   // {
   //   href: '/admin/horarios',
   //   icon: TimerIcon,
@@ -90,7 +91,7 @@ export default function SidebarContent({
       </div>
 
       {/* Menu Items */}
-      <nav className="flex-1 space-y-2 p-4">
+      <nav className="flex-1 overflow-hidden space-y-2 p-4">
         {menuItems.map(item => {
           const Icon = item.icon;
           const isActive = pathname === item.href;

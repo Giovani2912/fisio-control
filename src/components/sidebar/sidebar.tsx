@@ -9,7 +9,7 @@ export default function Sidebar() {
   return (
     <>
       {/* Desktop Sidebar - Só aparece em telas grandes */}
-      <aside className="hidden border-r border-gray-200 bg-white shadow-sm lg:block">
+      <aside className="hidden h-screen overflow-hidden border-r border-gray-200 bg-white shadow-sm lg:block">
         <SidebarContent pathname={pathname} />
       </aside>
     </>

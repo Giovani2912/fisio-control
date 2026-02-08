@@ -28,9 +28,9 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <div className="min-h-screen bg-[#f1f1f1] lg:grid lg:grid-cols-[1fr_7fr]">
+        <div className="h-screen bg-[#f1f1f1] lg:grid lg:grid-cols-[1fr_7fr]">
           <Sidebar />
-          <div className="lg:col-start-2">
+          <div className="lg:col-start-2 overflow-y-auto">
             {/* <Navbar /> */}
             <div className="px-6 py-4">{children}</div>
           </div>
