@@ -31,7 +31,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useState, useEffect } from 'react';
 import { z } from 'zod';
 import { format } from 'date-fns';
-import { Calendar as CalendarIcon } from 'lucide-react';
+import { Calendar as CalendarIcon, Clock } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Calendar } from '@/components/ui/calendar';
 import {
@@ -49,7 +49,7 @@ export interface SelectOption {
 export interface FormFieldConfig {
   name: string;
   label: string;
-  type: 'text' | 'email' | 'tel' | 'number' | 'select' | 'textarea' | 'date';
+  type: 'text' | 'email' | 'tel' | 'number' | 'select' | 'textarea' | 'date' | 'time';
   placeholder?: string;
   required?: boolean;
   options?: SelectOption[]; // Para campos select
@@ -70,9 +70,17 @@ interface GenericUpsertProps<T extends Record<string, unknown>> {
   isLoading?: boolean;
 }
 
+type RHFField = {
+  value: any;
+  onChange: (...args: any[]) => void;
+  onBlur?: (...args: any[]) => void;
+  name?: string;
+  ref?: any;
+};
+
 const renderFormControl = (
   type: string,
-  formField: Record<string, unknown>,
+  formField: RHFField,
   placeholder?: string,
   options?: Array<{ value: string; label: string }>,
 ) => {
@@ -80,10 +88,8 @@ const renderFormControl = (
     case 'select':
       return (
         <Select
-          // @ts-expect-error RHF provides string value and handler for selects
-          onValueChange={formField.onChange}
-          // @ts-expect-error RHF field value is string for selects
-          value={formField.value}
+          onValueChange={(v) => formField.onChange(v)}
+          value={(formField.value as string | undefined) ?? ''}
         >
           <SelectTrigger>
             <SelectValue placeholder={placeholder} />
@@ -108,6 +114,9 @@ const renderFormControl = (
       );
 
     case 'date':
+      // RHF value is a Date for date inputs in our forms.
+      // We keep it as `unknown` in the generic component and narrow here.
+      const dateValue = formField.value as Date | undefined;
       return (
         <Popover>
           <PopoverTrigger asChild>
@@ -119,9 +128,8 @@ const renderFormControl = (
               )}
             >
               <CalendarIcon className="mr-2 h-4 w-4" />
-              {formField.value ? (
-                // @ts-expect-error RHF field value is Date for date inputs
-                format(formField.value, 'dd/MM/yyyy')
+              {dateValue ? (
+                format(dateValue, 'dd/MM/yyyy')
               ) : (
                 <span>{placeholder || 'Selecione uma data'}</span>
               )}
@@ -130,14 +138,55 @@ const renderFormControl = (
           <PopoverContent className="w-auto p-0">
             <Calendar
               mode="single"
-              // @ts-expect-error RHF field value is Date for date inputs
-              selected={formField.value}
-              // @ts-expect-error RHF change handler accepts Date
-              onSelect={formField.onChange}
+              selected={dateValue}
+              onSelect={(d) => {
+                if (!d) return formField.onChange(d);
+                // Use UTC parts: the picker may give UTC midnight, so getDate() returns
+                // the previous day in timezones behind UTC (e.g. Brazil). Build local noon
+                // from the intended calendar day.
+                const y = d.getUTCFullYear();
+                const m = d.getUTCMonth();
+                const day = d.getUTCDate();
+                const safeDate = new Date(y, m, day, 12, 0, 0);
+                formField.onChange(safeDate);
+              }}
               initialFocus
             />
           </PopoverContent>
         </Popover>
+      );
+
+    case 'time':
+      // RHF value is a Date for time inputs in our forms.
+      const timeDateValue = formField.value as Date | undefined;
+      return (
+        <div className="relative">
+          <Clock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          <Input
+            type="time"
+            className="pl-10"
+            placeholder={placeholder}
+            value={
+              timeDateValue
+                ? `${String(timeDateValue.getHours()).padStart(2, '0')}:${String(
+                    timeDateValue.getMinutes(),
+                  ).padStart(2, '0')}`
+                : ''
+            }
+            onChange={(e) => {
+              const timeValue = e.target.value;
+              if (timeValue) {
+                const [hours, minutes] = timeValue.split(':');
+                const date = timeDateValue ? new Date(timeDateValue) : new Date();
+                date.setHours(parseInt(hours, 10));
+                date.setMinutes(parseInt(minutes, 10));
+                date.setSeconds(0);
+                date.setMilliseconds(0);
+                formField.onChange(date);
+              }
+            }}
+          />
+        </div>
       );
 
     default:

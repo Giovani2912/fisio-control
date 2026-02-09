@@ -8,13 +8,15 @@ import UpsertPaciente from './paciente-upsert';
 // Exemplo para paciente
 interface CreatePacienteButtonProps {
   text?: string;
+  variant?: "outline" | "ghost" | "default" | "link" | "destructive" | "secondary" | null | undefined;
 }
 
 export const CreatePacienteButton = ({
   text = 'Novo Paciente',
+  variant = "default"
 }: CreatePacienteButtonProps) => {
   return (
-    <GenericCreateButton text={text}>
+    <GenericCreateButton text={text} variant={variant}>
       {(isOpen, setIsOpen) => (
         <UpsertPaciente isOpen={isOpen} setIsOpen={setIsOpen} />
       )}

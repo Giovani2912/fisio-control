@@ -8,7 +8,7 @@ interface UpsertConsultaParams {
   data: Date;
   horaInicio: Date;
   horaFim: Date;
-  tipo: string;
+  tipo: "AVALIACAO" | "SESSAO" | "RETORNO" | "REAVALIACAO" | undefined;
   status: string;
   observacoes?: string;
   valorConsulta?: number;

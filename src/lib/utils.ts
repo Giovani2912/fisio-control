@@ -16,6 +16,15 @@ export function formatDate(date: Date): string {
   return new Intl.DateTimeFormat('pt-BR').format(date);
 }
 
+export function formatTime(date: Date): string {
+  return new Intl.DateTimeFormat('pt-BR', {
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: false,
+  }).format(date);
+}
+
 export function formatCPF(cpf: string): string {
   return cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
 }

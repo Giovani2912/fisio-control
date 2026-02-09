@@ -8,13 +8,15 @@ import { AvaliacaoFormData } from './config';
 
 interface CreateAvaliacaoButtonProps {
   text?: string;
+  variant?: "outline" | "ghost" | "default" | "link" | "destructive" | "secondary" | null | undefined;
 }
 
 export const CreateAvaliacaoButton = ({
   text = 'Nova Avaliação',
+  variant="default"
 }: CreateAvaliacaoButtonProps) => {
   return (
-    <GenericCreateButton text={text}>
+    <GenericCreateButton text={text} variant={variant}>
       {(isOpen, setIsOpen) => (
         <UpsertAvaliacao isOpen={isOpen} setIsOpen={setIsOpen} />
       )}

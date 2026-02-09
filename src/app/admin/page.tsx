@@ -3,7 +3,12 @@ import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import prisma from '@/lib/prisma';
 import Link from 'next/link';
-import { Users, Calendar, FileText, DollarSign, Plus, ArrowRight } from 'lucide-react';
+import { Users, Calendar, DollarSign, ArrowRight } from 'lucide-react';
+import { CreatePacienteButton } from '@/components/upserts/paciente/paciente-buttons';
+import { CreateAvaliacaoButton } from '@/components/upserts/avaliacao/avaliacao-buttons';
+import { CreateConsultaButton } from '@/components/upserts/consulta/consulta-buttons';
+import { fetchPacientes } from '@/app/actions/pacientes/fetch';
+import type { SelectOption } from '@/components/upserts/generic-upsert';
 
 export default async function Dashboard() {
   // Calcular datas
@@ -11,18 +16,10 @@ export default async function Dashboard() {
   hoje.setHours(0, 0, 0, 0);
   
   const amanhaInicio = new Date(hoje);
-  amanhaInicio.setDate(amanhaInicio.getDate() + 1);
-  amanhaInicio.setHours(0, 0, 0, 0);
+  amanhaInicio.setDate(hoje.getDate() + 1);
 
   const daqui7Dias = new Date(hoje);
-  daqui7Dias.setDate(daqui7Dias.getDate() + 7);
-  daqui7Dias.setHours(0, 0, 0, 0);
-
-  console.log('DEBUG - Data queries:', {
-    hoje: hoje.toISOString(),
-    amanhaInicio: amanhaInicio.toISOString(),
-    daqui7Dias: daqui7Dias.toISOString(),
-  });
+  daqui7Dias.setDate(hoje.getDate() + 7);
 
   // Buscar dados
   const [
@@ -32,6 +29,7 @@ export default async function Dashboard() {
     consultasHoje,
     consultasProximos7Dias,
     pagamentosPendentes,
+    totalPagamentos,
     pacientesRecentes,
     consultasProximas,
   ] = await Promise.all([
@@ -49,7 +47,7 @@ export default async function Dashboard() {
     prisma.consulta.count({
       where: {
         data: {
-          gte: hoje,
+          gte: amanhaInicio,
           lt: daqui7Dias,
         },
       },
@@ -57,33 +55,30 @@ export default async function Dashboard() {
     prisma.pagamento.count({
       where: { status: 'PENDENTE' },
     }),
+    prisma.pagamento.aggregate({
+      where: { status: 'PENDENTE' },
+      _sum: { valor: true },
+    }),
     prisma.paciente.findMany({
       take: 5,
       orderBy: { criadoEm: 'desc' },
     }),
     prisma.consulta.findMany({
       take: 5,
-      where: { data: { gte: new Date() } },
+      where: { data: { gte: hoje } },
       orderBy: { data: 'asc' },
       include: { paciente: true },
     }),
   ]);
 
-  const totalPagamentos = await prisma.pagamento.aggregate({
-    where: { status: 'PENDENTE' },
-    _sum: { valor: true },
-  });
+  const pacientes = await fetchPacientes();
 
-  console.log('DEBUG - Results:', {
-    totalConsultas,
-    consultasHoje,
-    consultasProximos7Dias,
-    totalPacientes,
-    pacientesAtivos,
-    pagamentosPendentes,
-  });
-  console.log('consultasProximas:', consultasProximas);
+  const pacienteOptions: SelectOption[] = pacientes.map(p => ({
+    value: p.id,
+    label: `${p.nome}`,
+  }));
 
+  console.log(totalConsultas)
   return (
     <>
       <Title title="Dashboard" />
@@ -119,7 +114,7 @@ export default async function Dashboard() {
           <CardContent>
             <p className="text-3xl font-bold text-green-900">{consultasHoje}</p>
             <p className="text-xs text-green-600 mt-2">
-              {totalConsultas} nos próximos 7 dias
+              {consultasProximos7Dias} nos próximos 7 dias
             </p>
           </CardContent>
         </Card>
@@ -150,27 +145,10 @@ export default async function Dashboard() {
           <CardHeader className="pb-3">
             <h3 className="text-sm font-medium text-gray-700">Ações Rápidas</h3>
           </CardHeader>
-          <CardContent className="space-y-2">
-            <Link href="/admin/pacientes?new=true">
-              <Button
-                variant="ghost"
-                size="sm"
-                className="w-full justify-start text-purple-700 hover:bg-purple-200"
-              >
-                <Plus className="h-4 w-4 mr-2" />
-                Novo Paciente
-              </Button>
-            </Link>
-            <Link href="/admin/avaliacoes?new=true">
-              <Button
-                variant="ghost"
-                size="sm"
-                className="w-full justify-start text-purple-700 hover:bg-purple-200"
-              >
-                <Plus className="h-4 w-4 mr-2" />
-                Nova Avaliação
-              </Button>
-            </Link>
+          <CardContent className="space-y-2 flex flex-col">
+            <CreatePacienteButton variant={"outline"}/>
+            <CreateAvaliacaoButton variant={"ghost"}/>
+            <CreateConsultaButton variant={"outline"} pacienteOptions={pacienteOptions}/>
           </CardContent>
         </Card>
       </div>
@@ -197,7 +175,7 @@ export default async function Dashboard() {
                     className="flex items-center justify-between p-3 rounded-lg hover:bg-gray-50 transition"
                   >
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-full bg-green-200 flex items-center justify-center text-green-700 font-semibold">
+                      <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-700 font-semibold">
                         {paciente.nome.charAt(0).toUpperCase()}
                       </div>
                       <div className="min-w-0">
@@ -217,7 +195,8 @@ export default async function Dashboard() {
               </div>
             ) : (
               <div className="text-center py-8 text-gray-500">
-                <p>Nenhum paciente registrado</p>
+                <Users className="h-12 w-12 mx-auto mb-2 opacity-20" />
+                <p className="text-sm">Nenhum paciente registrado</p>
               </div>
             )}
           </CardContent>
@@ -243,13 +222,13 @@ export default async function Dashboard() {
                     key={consulta.id}
                     className="flex items-center justify-between p-3 rounded-lg hover:bg-gray-50 transition border-l-4 border-green-500"
                   >
-                    <div className="min-w-0">
+                    <div className="min-w-0 flex-1">
                       <p className="font-medium text-sm">{consulta.paciente.nome}</p>
                       <p className="text-xs text-gray-500">
                         {new Date(consulta.data).toLocaleDateString('pt-BR', {
                           weekday: 'short',
-                          month: 'short',
                           day: 'numeric',
+                          month: 'short',
                           hour: '2-digit',
                           minute: '2-digit',
                         })}
@@ -258,12 +237,18 @@ export default async function Dashboard() {
                         {consulta.tipo}
                       </span>
                     </div>
+                    <Link href={`/admin/consultas/${consulta.id}`}>
+                      <Button variant="ghost" size="sm">
+                        <ArrowRight className="h-4 w-4" />
+                      </Button>
+                    </Link>
                   </div>
                 ))}
               </div>
             ) : (
               <div className="text-center py-8 text-gray-500">
-                <p>Nenhuma consulta agendada</p>
+                <Calendar className="h-12 w-12 mx-auto mb-2 opacity-20" />
+                <p className="text-sm">Nenhuma consulta agendada</p>
               </div>
             )}
           </CardContent>

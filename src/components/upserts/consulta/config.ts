@@ -14,8 +14,12 @@ export const consultaSchema = z.object({
     horaFim: z.date({
       message: 'A hora de fim é obrigatória.',
     }),
-    tipo: z.nativeEnum(TipoConsulta).optional(),
-    status: z.nativeEnum(StatusConsulta).optional(),
+    tipo: z.nativeEnum(TipoConsulta, {
+      message: 'O tipo é obrigatório.',
+    }),
+    status: z.nativeEnum(StatusConsulta, {
+      message: 'O status é obrigatório.',
+    }),
     observacoes: z.string().trim().optional(),
     valorConsulta: z.number().optional(),
     paciente: z.string().trim().min(1, {
@@ -52,13 +56,13 @@ export const consultaFields: FormFieldConfig[] = [
     {
         name: 'horaInicio',
         label: 'Hora Início',
-        type: 'text',
+        type: 'time',
         placeholder: 'Selecione a hora de início...',   
     },
     {
         name: 'horaFim',
         label: 'Hora Fim',
-        type: 'text',
+        type: 'time',
         placeholder: 'Selecione a hora de fim...',
     },
     {

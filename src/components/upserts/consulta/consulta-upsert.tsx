@@ -32,7 +32,7 @@ const UpsertConsulta = ({
       await upsertConsulta({
         ...data,
         id: avaliacaoId,
-        pacienteId, // Adiciona o pacienteId da URL
+        paciente: pacienteId ?? data.paciente, // URL (página do paciente) ou form (página de consultas)
       });
       setIsOpen(false);
 

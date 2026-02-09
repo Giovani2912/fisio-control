@@ -7,11 +7,13 @@ import { Button } from '../ui/button';
 // ===== BOTÃO DE CRIAR GENÉRICO =====
 interface GenericCreateButtonProps {
   text?: string;
+  variant?: "outline" | "ghost" | "default" | "link" | "destructive" | "secondary" | null | undefined;
   children: (isOpen: boolean, setIsOpen: (open: boolean) => void) => ReactNode;
 }
 
 export const GenericCreateButton = ({
   text,
+  variant,
   children,
 }: GenericCreateButtonProps) => {
   const [dialogIsOpen, setDialogIsOpen] = useState(false);
@@ -21,6 +23,7 @@ export const GenericCreateButton = ({
       <Button
         className="cursor-pointer font-bold"
         onClick={() => setDialogIsOpen(true)}
+        variant={variant}
       >
         <span className="hidden md:block">{text}</span>
         <PlusIcon />

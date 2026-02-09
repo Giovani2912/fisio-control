@@ -41,7 +41,7 @@ export default async function Consultas() {
   const pacientes = await fetchPacientes();
   const pacienteOptions: SelectOption[] = pacientes.map(p => ({
     value: p.id,
-    label: `${p.nome}${p.celular ? ' — ' + p.celular : ''}`,
+    label: `${p.nome}`,
   }));
 
   return (
