@@ -2,6 +2,7 @@
 import db from '../../../lib/prisma';
 import { upsertConsultaSchema } from './schema';
 import { revalidatePath } from 'next/cache';
+import { Prisma } from '@prisma/client';
 
 interface UpsertConsultaParams {
   id?: string;
@@ -13,11 +14,15 @@ interface UpsertConsultaParams {
   observacoes?: string;
   valorConsulta?: number;
   paciente: string;
-  
 }
 
 export const upsertConsulta = async (params: UpsertConsultaParams) => {
   const validatedData = upsertConsultaSchema.parse(params);
+
+  // Converte valorConsulta de number para Decimal
+  const valorConsultaDecimal = validatedData.valorConsulta 
+    ? new Prisma.Decimal(validatedData.valorConsulta)
+    : undefined;
 
   if (validatedData.id) {
     await db.consulta.update({
@@ -29,7 +34,7 @@ export const upsertConsulta = async (params: UpsertConsultaParams) => {
         tipo: validatedData.tipo,
         status: validatedData.status,
         observacoes: validatedData.observacoes,
-        valorConsulta: validatedData.valorConsulta,
+        valorConsulta: valorConsultaDecimal,
       },
     });
   } else {
@@ -41,7 +46,7 @@ export const upsertConsulta = async (params: UpsertConsultaParams) => {
         tipo: validatedData.tipo,
         status: validatedData.status,
         observacoes: validatedData.observacoes,
-        valorConsulta: validatedData.valorConsulta,
+        valorConsulta: valorConsultaDecimal,
         paciente: { connect: { id: validatedData.paciente } },
       },
     });

@@ -27,8 +27,8 @@ import {
   SelectValue,
 } from '../ui/select';
 import { useForm } from 'react-hook-form';
+import { useState, useEffect, type Ref } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useState, useEffect } from 'react';
 import { z } from 'zod';
 import { format } from 'date-fns';
 import { Calendar as CalendarIcon, Clock } from 'lucide-react';
@@ -71,11 +71,11 @@ interface GenericUpsertProps<T extends Record<string, unknown>> {
 }
 
 type RHFField = {
-  value: any;
-  onChange: (...args: any[]) => void;
-  onBlur?: (...args: any[]) => void;
+  value: unknown;
+  onChange: (value: unknown) => void;
+  onBlur?: () => void;
   name?: string;
-  ref?: any;
+  ref?: Ref<HTMLInputElement | HTMLTextAreaElement>;
 };
 
 const renderFormControl = (
@@ -104,14 +104,18 @@ const renderFormControl = (
         </Select>
       );
 
-    case 'textarea':
+    case 'textarea': {
+      const { ref, value, ...rest } = formField;
       return (
         <Textarea
           placeholder={placeholder}
           className="resize-none"
-          {...formField}
+          ref={ref as Ref<HTMLTextAreaElement>}
+          value={(value as string) ?? ''}
+          {...rest}
         />
       );
+    }
 
     case 'date':
       // RHF value is a Date for date inputs in our forms.
@@ -189,8 +193,18 @@ const renderFormControl = (
         </div>
       );
 
-    default:
-      return <Input type={type} placeholder={placeholder} {...formField} />;
+    default: {
+      const { ref, value, ...rest } = formField;
+      return (
+        <Input
+          type={type}
+          placeholder={placeholder}
+          ref={ref as Ref<HTMLInputElement>}
+          value={(value as string | number) ?? ''}
+          {...rest}
+        />
+      );
+    }
   }
 };
 

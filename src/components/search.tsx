@@ -66,10 +66,6 @@ export default function SearchInput({ initialSearch = '' }: SearchInputProps) {
     setSearchTerm(e.target.value);
   };
 
-  const handleSelectSuggestion = (nome: string) => {
-    // REMOVIDO - não há mais sugestões
-  };
-
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     // Busca já é feita automaticamente pelo debounce, mas permite override manual
@@ -95,10 +91,6 @@ export default function SearchInput({ initialSearch = '' }: SearchInputProps) {
     router.push(`/admin/pacientes?${params.toString()}`);
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    // Não há mais dropdown para fechar
-  };
-
   return (
     <div className="relative mt-4">
       <form onSubmit={handleSubmit}>
@@ -113,7 +105,6 @@ export default function SearchInput({ initialSearch = '' }: SearchInputProps) {
             type="text"
             value={searchTerm}
             onChange={handleInputChange}
-            onKeyDown={handleKeyDown}
             placeholder="Buscar paciente... (mín. 3 caracteres)"
             className="w-full pr-12 pl-10 md:w-1/3"
             autoComplete="off"

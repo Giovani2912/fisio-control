@@ -12,10 +12,10 @@ export const upsertConsultaSchema = z.object({
   horaFim: z.date({
     message: 'A hora de fim é obrigatória.',
   }),
-  tipo: z.nativeEnum(TipoConsulta).optional(),
-  status: z.nativeEnum(StatusConsulta).optional(),
+  tipo: z.nativeEnum(TipoConsulta).optional().default('AVALIACAO'),
+  status: z.nativeEnum(StatusConsulta).optional().default('AGENDADA'),
   observacoes: z.string().trim().optional(),
-  valorConsulta: z.number().optional(),
+  valorConsulta: z.number().positive('O valor deve ser positivo'),
   paciente: z.string().trim().min(1, {
     message: 'O paciente é obrigatório.',
   }),

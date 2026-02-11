@@ -52,7 +52,7 @@ model Consulta {
   tipo          TipoConsulta
   status        StatusConsulta @default(AGENDADA)
   observacoes   String?
-  valorConsulta Decimal        @db.Decimal(8, 2)
+  valorConsulta Decimal        @default(0) @db.Decimal(8, 2) // Adiciona default
 
   // Relacionamentos
   paciente   Paciente @relation(fields: [pacienteId], references: [id])
