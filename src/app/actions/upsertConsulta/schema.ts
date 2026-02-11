@@ -15,7 +15,7 @@ export const upsertConsultaSchema = z.object({
   tipo: z.nativeEnum(TipoConsulta).optional().default('AVALIACAO'),
   status: z.nativeEnum(StatusConsulta).optional().default('AGENDADA'),
   observacoes: z.string().trim().optional(),
-  valorConsulta: z.number().positive('O valor deve ser positivo'),
+  valorConsulta: z.number().optional(),
   paciente: z.string().trim().min(1, {
     message: 'O paciente é obrigatório.',
   }),
