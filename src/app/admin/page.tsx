@@ -147,7 +147,7 @@ export default async function Dashboard() {
           </CardHeader>
           <CardContent className="space-y-2 flex flex-col">
             <CreatePacienteButton variant={"outline"}/>
-            <CreateAvaliacaoButton variant={"ghost"}/>
+            {/* <CreateAvaliacaoButton variant={"ghost"}/> */}
             <CreateConsultaButton variant={"outline"} pacienteOptions={pacienteOptions}/>
           </CardContent>
         </Card>
