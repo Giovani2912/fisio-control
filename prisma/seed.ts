@@ -2,6 +2,8 @@ import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
+const SEED_CLERK_USER_ID = process.env.SEED_CLERK_USER_ID ?? 'user_placeholder';
+
 async function main() {
   console.log('Iniciando seed do banco de dados...');
 
@@ -11,6 +13,7 @@ async function main() {
   const pacientes = await Promise.all([
     prisma.paciente.create({
       data: {
+        clerkUserId: SEED_CLERK_USER_ID,
         nome: 'Obito Silva Santos',
         cpf: '121345611278109012',
         rg: 'MG12345671',
@@ -26,6 +29,7 @@ async function main() {
 
     prisma.paciente.create({
       data: {
+        clerkUserId: SEED_CLERK_USER_ID,
         nome: 'Minato Eduardo Lima',
         cpf: '98127615143210120',
         rg: 'SP98765431',
@@ -41,6 +45,7 @@ async function main() {
 
     prisma.paciente.create({
       data: {
+        clerkUserId: SEED_CLERK_USER_ID,
         nome: 'Kakashi Oliveira',
         cpf: '45678911123001211',
         rg: 'RJ456782911',
@@ -56,6 +61,7 @@ async function main() {
 
     prisma.paciente.create({
       data: {
+        clerkUserId: SEED_CLERK_USER_ID,
         nome: 'Sasuke Ferreira Costa',
         cpf: '78911213324560110',
         rg: 'BA78912234',
@@ -71,6 +77,7 @@ async function main() {
 
     prisma.paciente.create({
       data: {
+        clerkUserId: SEED_CLERK_USER_ID,
         nome: 'Naruto Rodrigues Alves',
         cpf: '32161542987011230',
         rg: 'PR32165149',

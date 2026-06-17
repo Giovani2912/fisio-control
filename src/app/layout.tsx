@@ -3,6 +3,15 @@ import { Geist, Geist_Mono } from 'next/font/google';
 import './globals.css';
 import Sidebar from '@/components/sidebar/sidebar';
 import { Toaster } from '@/components/ui/sonner';
+import { Button } from '@/components/ui/button';
+import {
+  ClerkProvider,
+  SignInButton,
+  SignUpButton,
+  SignOutButton,
+  Show,
+} from '@clerk/nextjs';
+import { LogIn, LogOut } from 'lucide-react';
 const geistSans = Geist({
   variable: '--font-geist-sans',
   subsets: ['latin'],
@@ -24,20 +33,47 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        <div className="h-screen bg-[#f1f1f1] lg:grid lg:grid-cols-[1fr_7fr]">
-          <Sidebar />
-          <div className="lg:col-start-2 overflow-y-auto">
-            {/* <Navbar /> */}
-            <div className="px-6 py-4">{children}</div>
+    <ClerkProvider>
+      <html lang="en">
+        <body
+          className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        >
+          <div className="h-screen bg-[#f1f1f1] lg:grid lg:grid-cols-[1fr_7fr]">
+            <Sidebar />
+            <div className="lg:col-start-2 overflow-y-auto">
+              <div className="flex justify-end px-6 py-3 gap-2">
+                <Show when="signed-out">
+                  <SignInButton mode="modal">
+                    <Button variant="outline" size="sm">
+                      <LogIn className="h-4 w-4" />
+                      Entrar
+                    </Button>
+                  </SignInButton>
+                  <SignUpButton mode="modal">
+                    <Button
+                      size="sm"
+                      className="bg-green-600 text-white hover:bg-green-700"
+                    >
+                      Criar conta
+                    </Button>
+                  </SignUpButton>
+                </Show>
+                <Show when="signed-in">
+                  <SignOutButton>
+                    <Button variant="outline" size="sm">
+                      <LogOut className="h-4 w-4" />
+                      Sair
+                    </Button>
+                  </SignOutButton>
+                </Show>
+              </div>
+              <div className="px-6 py-4">{children}</div>
+            </div>
           </div>
-        </div>
 
-        <Toaster />
-      </body>
-    </html>
+          <Toaster />
+        </body>
+      </html>
+    </ClerkProvider>
   );
 }

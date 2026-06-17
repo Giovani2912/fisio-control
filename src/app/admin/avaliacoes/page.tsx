@@ -1,10 +1,12 @@
 import { DataTable } from './data/data-table';
 import { columns, Paciente as AvaliacaoRow } from './data/columns';
 import prisma from '@/lib/prisma';
+import { auth } from '@clerk/nextjs/server';
 
-async function getData(): Promise<AvaliacaoRow[]> {
+async function getData(userId: string): Promise<AvaliacaoRow[]> {
   const data = await prisma.avaliacao
     .findMany({
+      where: { paciente: { clerkUserId: userId } },
       orderBy: { criadoEm: 'desc' },
       include: { paciente: true },
     })
@@ -24,7 +26,8 @@ async function getData(): Promise<AvaliacaoRow[]> {
 }
 
 export default async function Avaliacoes() {
-  const avaliacoes: AvaliacaoRow[] = await getData();
+  const { userId } = await auth();
+  const avaliacoes: AvaliacaoRow[] = await getData(userId!);
 
   return (
     <>

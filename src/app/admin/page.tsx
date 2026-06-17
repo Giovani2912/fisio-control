@@ -9,8 +9,11 @@ import { CreateConsultaButton } from '@/components/upserts/consulta/consulta-but
 import { fetchPacientes } from '@/app/actions/pacientes/fetch';
 import type { SelectOption } from '@/components/upserts/generic-upsert';
 import { TIPO_COLORS, TIPO_LABELS, TIPO_BORDER_COLORS } from '@/constants/consulta';
+import { auth } from '@clerk/nextjs/server';
 
 export default async function Dashboard() {
+  const { userId } = await auth();
+
   // Calcular datas
   const hoje = new Date();
   hoje.setHours(0, 0, 0, 0);
@@ -33,11 +36,12 @@ export default async function Dashboard() {
     pacientesRecentes,
     consultasProximas,
   ] = await Promise.all([
-    prisma.consulta.count(),
-    prisma.paciente.count(),
-    prisma.paciente.count({ where: { ativo: true } }),
+    prisma.consulta.count({ where: { paciente: { clerkUserId: userId! } } }),
+    prisma.paciente.count({ where: { clerkUserId: userId! } }),
+    prisma.paciente.count({ where: { clerkUserId: userId!, ativo: true } }),
     prisma.consulta.count({
       where: {
+        paciente: { clerkUserId: userId! },
         data: {
           gte: hoje,
           lt: amanhaInicio,
@@ -46,6 +50,7 @@ export default async function Dashboard() {
     }),
     prisma.consulta.count({
       where: {
+        paciente: { clerkUserId: userId! },
         data: {
           gte: amanhaInicio,
           lt: daqui7Dias,
@@ -53,19 +58,20 @@ export default async function Dashboard() {
       },
     }),
     prisma.pagamento.count({
-      where: { status: 'PENDENTE' },
+      where: { status: 'PENDENTE', paciente: { clerkUserId: userId! } },
     }),
     prisma.pagamento.aggregate({
-      where: { status: 'PENDENTE' },
+      where: { status: 'PENDENTE', paciente: { clerkUserId: userId! } },
       _sum: { valor: true },
     }),
     prisma.paciente.findMany({
       take: 5,
+      where: { clerkUserId: userId! },
       orderBy: { criadoEm: 'desc' },
     }),
     prisma.consulta.findMany({
       take: 5,
-      where: { data: { gte: hoje } },
+      where: { paciente: { clerkUserId: userId! }, data: { gte: hoje } },
       orderBy: { data: 'asc' },
       include: { paciente: true },
     }),

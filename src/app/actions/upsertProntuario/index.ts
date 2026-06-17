@@ -4,6 +4,7 @@ import Anthropic from '@anthropic-ai/sdk';
 import db from '../../../lib/prisma';
 import { generateSoapSchema, saveProntuarioSchema } from './schema';
 import { revalidatePath } from 'next/cache';
+import { requireUserId, assertPacienteOwnership } from '@/lib/auth-guards';
 
 const REGIOES_CORPO = {
   coluna_cervical: 'Coluna Cervical',
@@ -90,7 +91,10 @@ export type SaveProntuarioParams = GenerateSoapParams & {
 };
 
 export const saveProntuario = async (params: SaveProntuarioParams) => {
+  const userId = await requireUserId();
   const validatedData = saveProntuarioSchema.parse(params);
+
+  await assertPacienteOwnership(validatedData.pacienteId, userId);
 
   const data = {
     pacienteId: validatedData.pacienteId,
@@ -104,7 +108,10 @@ export const saveProntuario = async (params: SaveProntuarioParams) => {
   };
 
   if (validatedData.id) {
-    await db.prontuario.update({ where: { id: validatedData.id }, data });
+    await db.prontuario.update({
+      where: { id: validatedData.id, paciente: { clerkUserId: userId } },
+      data,
+    });
   } else {
     await db.prontuario.create({ data });
   }
@@ -113,6 +120,14 @@ export const saveProntuario = async (params: SaveProntuarioParams) => {
 };
 
 export const deleteProntuario = async (id: string) => {
-  const deleted = await db.prontuario.delete({ where: { id } });
-  revalidatePath(`/admin/pacientes/${deleted.pacienteId}`);
+  const userId = await requireUserId();
+
+  const prontuario = await db.prontuario.findFirst({
+    where: { id, paciente: { clerkUserId: userId } },
+    select: { pacienteId: true },
+  });
+  if (!prontuario) throw new Error('Prontuário não encontrado');
+
+  await db.prontuario.delete({ where: { id } });
+  revalidatePath(`/admin/pacientes/${prontuario.pacienteId}`);
 };

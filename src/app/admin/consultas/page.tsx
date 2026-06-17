@@ -5,10 +5,12 @@ import { CreateConsultaButton } from '@/components/upserts/consulta/consulta-but
 import { fetchPacientes } from '@/app/actions/pacientes/fetch';
 import type { SelectOption } from '@/components/upserts/generic-upsert';
 import { ConsultasView } from './components/consultas-view';
+import { auth } from '@clerk/nextjs/server';
 
-async function getData(): Promise<ConsultaRow[]> {
+async function getData(userId: string): Promise<ConsultaRow[]> {
   const data = await prisma.consulta
     .findMany({
+      where: { paciente: { clerkUserId: userId } },
       orderBy: { data: 'desc' },
       include: { paciente: true },
     })
@@ -37,7 +39,8 @@ async function getData(): Promise<ConsultaRow[]> {
 }
 
 export default async function Consultas() {
-  const consultas: ConsultaRow[] = await getData();
+  const { userId } = await auth();
+  const consultas: ConsultaRow[] = await getData(userId!);
   const pacientes = await fetchPacientes();
   const pacienteOptions: SelectOption[] = pacientes.map(p => ({
     value: p.id,

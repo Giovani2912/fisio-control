@@ -13,9 +13,10 @@ datasource db {
 // ===== ENTIDADES DE PESSOAS =====
 
 model Paciente {
-  id      String  @id @default(cuid())
-  nome    String
-  cpf     String  @unique
+  id          String  @id @default(cuid())
+  clerkUserId String
+  nome        String
+  cpf         String  @unique
   rg      String?
   email   String?
   celular String

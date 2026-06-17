@@ -1,4 +1,5 @@
 import prisma from '@/lib/prisma';
+import { auth } from '@clerk/nextjs/server';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { CreateAvaliacaoButton, EditAvaliacaoButton } from '@/components/upserts/avaliacao/avaliacao-buttons';
 import { EditPacienteButton } from '@/components/upserts/paciente/paciente-buttons';
@@ -14,8 +15,9 @@ export default async function PacienteInfo({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const paciente = await prisma.paciente.findUnique({
-    where: { id },
+  const { userId } = await auth();
+  const paciente = await prisma.paciente.findFirst({
+    where: { id, clerkUserId: userId! },
     include: {
       avaliacoes: true,
       consultas: true,
