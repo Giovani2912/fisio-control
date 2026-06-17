@@ -349,65 +349,74 @@ async function main() {
   const prontuarios = await Promise.all([
     prisma.prontuario.create({
       data: {
-        data: new Date(dataBase.getTime() - 2 * 24 * 60 * 60 * 1000), // -2 dias
+        data: new Date(dataBase.getTime() - 2 * 24 * 60 * 60 * 1000),
+        queixaDoDia: 'melhora de 40% da dor lombar, consegue ficar sentada por mais tempo',
+        nivelDor: 4,
+        regiaoCorpo: 'coluna_lombar',
+        tecnicas: 'alongamento de cadeia posterior, fortalecimento de transverso do abdome, liberação miofascial em paravertebrais',
+        respostaTratamento: 'boa',
         evolucao:
-          'Paciente refere melhora de 40% da dor lombar. Amplitude de movimento em flexão aumentou para 70%. Consegue permanecer sentada por mais tempo.',
-        procedimentos:
-          'Alongamento de cadeia posterior, fortalecimento de transverso do abdome, liberação miofascial em paravertebrais',
-        observacoes:
-          'Paciente muito colaborativa. Realizando exercícios domiciliares conforme orientado.',
+          'S: Paciente refere melhora de 40% da dor lombar. Consegue permanecer sentada por mais tempo sem exacerbação álgica.\nO: Amplitude de movimento em flexão lombar aumentou para 70°. Força muscular grau 4/5 em extensores lombares.\nA: Boa evolução clínica. Paciente aderente ao programa de exercícios domiciliares.\nP: Manter protocolo atual. Progredir fortalecimento de core na próxima sessão.',
+        observacoes: 'Realizando exercícios domiciliares conforme orientado.',
         pacienteId: pacientes[0].id,
       },
     }),
 
     prisma.prontuario.create({
       data: {
-        data: new Date(dataBase.getTime() - 1 * 24 * 60 * 60 * 1000), // -1 dia
+        data: new Date(dataBase.getTime() - 1 * 24 * 60 * 60 * 1000),
+        queixaDoDia: 'sem dor, quer retornar ao futebol logo',
+        nivelDor: 0,
+        regiaoCorpo: 'joelho_direito',
+        tecnicas: 'fortalecimento de quadríceps e isquiotibiais, treino proprioceptivo em superfície instável, exercícios funcionais',
+        respostaTratamento: 'excelente',
         evolucao:
-          'Excelente evolução pós-operatória. Amplitude de movimento: flexão 120°, extensão completa. Força muscular grau 5/5.',
-        procedimentos:
-          'Fortalecimento de quadríceps e isquiotibiais, treino proprioceptivo em superfície instável, exercícios funcionais',
-        observacoes:
-          'Paciente ansioso para retornar ao futebol. Orientado sobre progressão gradual.',
+          'S: Paciente nega dor. Refere ansiedade para retornar às atividades esportivas.\nO: Amplitude de movimento: flexão 120°, extensão completa. Força muscular grau 5/5 bilateral.\nA: Excelente evolução pós-operatória. Critérios de alta em progressão.\nP: Orientar sobre progressão gradual ao esporte. Agendar reavaliação em 15 dias.',
+        observacoes: 'Paciente orientado sobre progressão gradual ao futebol.',
         pacienteId: pacientes[1].id,
       },
     }),
 
     prisma.prontuario.create({
       data: {
-        data: new Date(dataBase.getTime() - 3 * 24 * 60 * 60 * 1000), // -3 dias
+        data: new Date(dataBase.getTime() - 3 * 24 * 60 * 60 * 1000),
+        queixaDoDia: 'cefaleia diminuiu, agora 2x por semana em vez de diária',
+        nivelDor: 3,
+        regiaoCorpo: 'coluna_cervical',
+        tecnicas: 'mobilização cervical, fortalecimento de flexores cervicais profundos, exercícios de consciência postural',
+        respostaTratamento: 'boa',
         evolucao:
-          'Redução significativa da cefaleia (frequência diminuiu de diária para 2x/semana). Melhora da postura cervical.',
-        procedimentos:
-          'Mobilização cervical, fortalecimento de flexores cervicais profundos, exercícios de consciência postural',
-        observacoes:
-          'Paciente implementou pausas no trabalho conforme orientado. Adquiriu suporte para monitor.',
+          'S: Paciente refere redução significativa da cefaleia, frequência diminuiu de diária para 2x/semana.\nO: Melhora da postura cervical observada. Mobilidade cervical dentro dos limites normais.\nA: Evolução satisfatória. Paciente implementou modificações ergonômicas no ambiente de trabalho.\nP: Continuar protocolo de fortalecimento cervical. Reforçar orientações posturais.',
         pacienteId: pacientes[2].id,
       },
     }),
 
     prisma.prontuario.create({
       data: {
-        data: new Date(dataBase.getTime() - 4 * 24 * 60 * 60 * 1000), // -4 dias
+        data: new Date(dataBase.getTime() - 4 * 24 * 60 * 60 * 1000),
+        queixaDoDia: 'dor noturna menos intensa, ainda com limitação ao elevar o braço',
+        nivelDor: 6,
+        regiaoCorpo: 'ombro_esquerdo',
+        tecnicas: 'mobilizações articulares graduais, exercícios pendulares, aplicação de calor superficial',
+        respostaTratamento: 'parcial',
         evolucao:
-          'Discreta melhora da amplitude de movimento. Flexão: 90°, abdução: 85°. Dor noturna menos intensa.',
-        procedimentos:
-          'Mobilizações articulares graduais, exercícios pendulares, aplicação de calor superficial',
-        observacoes:
-          'Processo lento conforme esperado para capsulite adesiva. Paciente orientada sobre cronologia da patologia.',
+          'S: Paciente refere dor noturna menos intensa. Persistência da limitação ao elevar o membro superior.\nO: Flexão: 90°, abdução: 85°. End feel capsular presente.\nA: Evolução discreta, condizente com o quadro de capsulite adesiva. Processo fisiológico esperado.\nP: Manter mobilizações graduais. Orientar paciente sobre cronologia da patologia.',
+        observacoes: 'Processo lento conforme esperado para capsulite adesiva.',
         pacienteId: pacientes[3].id,
       },
     }),
 
     prisma.prontuario.create({
       data: {
-        data: new Date(dataBase.getTime() - 1 * 24 * 60 * 60 * 1000), // -1 dia
+        data: new Date(dataBase.getTime() - 1 * 24 * 60 * 60 * 1000),
+        queixaDoDia: 'sem dor matinal, consegue caminhar longas distâncias',
+        nivelDor: 0,
+        regiaoCorpo: 'tornozelo_pe_direito',
+        tecnicas: 'alongamento específico de fáscia plantar, fortalecimento de músculos intrínsecos do pé',
+        respostaTratamento: 'excelente',
         evolucao:
-          'Dor matinal eliminou completamente. Consegue caminhar longas distâncias sem dor. Retornará à corrida progressivamente.',
-        procedimentos:
-          'Alongamento específico de fáscia plantar, fortalecimento de músculos intrínsecos do pé, orientação sobre tênis',
-        observacoes:
-          'Alta da fisioterapia na próxima sessão. Orientações para prevenção de recidivas fornecidas.',
+          'S: Paciente refere ausência completa de dor matinal. Consegue caminhar longas distâncias sem sintomas.\nO: Teste de estiramento da fáscia plantar negativo. Força dos músculos intrínsecos grau 5/5.\nA: Alta clínica. Objetivos terapêuticos atingidos.\nP: Alta da fisioterapia. Orientações preventivas fornecidas. Retornar em caso de recidiva.',
+        observacoes: 'Alta prevista para a próxima sessão. Orientações para prevenção de recidivas.',
         pacienteId: pacientes[4].id,
       },
     }),

@@ -117,8 +117,14 @@ model Prontuario {
   id            String   @id @default(cuid())
   data          DateTime @default(now())
   evolucao      String
-  procedimentos String?
-  observacoes   String?
+
+  // Entradas do fisioterapeuta (inputs para geração do SOAP)
+  queixaDoDia        String
+  nivelDor           Int?
+  regiaoCorpo        String
+  tecnicas           String
+  respostaTratamento String
+  observacoes        String?
 
   // Relacionamentos
   paciente   Paciente @relation(fields: [pacienteId], references: [id])
