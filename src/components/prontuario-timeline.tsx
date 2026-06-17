@@ -46,11 +46,12 @@ function parseSoap(text: string): SoapSection[] {
   };
 
   for (const line of lines) {
-    const match = line.match(/^\*{0,2}([SOAP])\*{0,2}\s*(?:\([^)]*\))?\s*[:\-]\s*/i);
+    // Handles: **S (Subjetivo)**, S (Subjetivo):, S:, S — Subjetivo, S - content
+    const match = line.match(/^\*{0,2}([SOAP])\*{0,2}\s*(?:\([^)]*\))?\s*\*{0,2}\s*(?:[:\-—]\s*|$)/i);
     if (match) {
       flush();
       currentKey = match[1].toUpperCase() as SoapKey;
-      const rest = line.replace(/^\*{0,2}[SOAP]\*{0,2}\s*(?:\([^)]*\))?\s*[:\-]\s*/i, '').trim();
+      const rest = line.replace(/^\*{0,2}[SOAP]\*{0,2}\s*(?:\([^)]*\))?\s*\*{0,2}\s*[:\-—]?\s*/i, '').trim();
       currentLines = rest ? [rest] : [];
     } else if (currentKey) {
       currentLines.push(line);

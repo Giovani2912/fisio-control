@@ -52,8 +52,9 @@ export interface FormFieldConfig {
   type: 'text' | 'email' | 'tel' | 'number' | 'select' | 'textarea' | 'date' | 'time';
   placeholder?: string;
   required?: boolean;
-  options?: SelectOption[]; // Para campos select
-  gridColumn?: 'full' | 'half'; // Para controlar o layout
+  options?: SelectOption[];
+  gridColumn?: 'full' | 'half';
+  step?: number;
 }
 
 // Props do componente genérico
@@ -68,6 +69,7 @@ interface GenericUpsertProps<T extends Record<string, unknown>> {
   onSubmit: (data: T, isUpdate: boolean) => Promise<void>;
   entityId?: string;
   isLoading?: boolean;
+  onFieldChange?: (name: string, value: unknown, setValue: (name: string, value: unknown) => void) => void;
 }
 
 type RHFField = {
@@ -83,6 +85,7 @@ const renderFormControl = (
   formField: RHFField,
   placeholder?: string,
   options?: Array<{ value: string; label: string }>,
+  step?: number,
 ) => {
   switch (type) {
     case 'select':
@@ -170,6 +173,7 @@ const renderFormControl = (
             type="time"
             className="pl-10"
             placeholder={placeholder}
+            step={step}
             value={
               timeDateValue
                 ? `${String(timeDateValue.getHours()).padStart(2, '0')}:${String(
@@ -219,6 +223,7 @@ function GenericUpsert<T extends Record<string, unknown>>({
   onSubmit,
   entityId,
   isLoading = false,
+  onFieldChange,
 }: GenericUpsertProps<T>) {
   const [internalLoading, setInternalLoading] = useState(false);
 
@@ -252,7 +257,7 @@ function GenericUpsert<T extends Record<string, unknown>>({
   const loading = isLoading || internalLoading;
 
   const renderField = (field: FormFieldConfig) => {
-    const { name, label, type, placeholder, options } = field;
+    const { name, label, type, placeholder, options, step } = field;
 
     return (
       <FormField
@@ -261,17 +266,28 @@ function GenericUpsert<T extends Record<string, unknown>>({
         control={form.control}
         // @ts-expect-error Name maps to FieldPath<T> through config
         name={name}
-        render={({ field: formField }) => (
-          <FormItem
-            className={field.gridColumn === 'full' ? 'md:col-span-2' : ''}
-          >
-            <FormLabel>{label}</FormLabel>
-            <FormControl>
-              {renderFormControl(type, formField, placeholder, options)}
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        )}
+        render={({ field: formField }) => {
+          const wrappedFormField = onFieldChange
+            ? {
+                ...formField,
+                onChange: (value: unknown) => {
+                  formField.onChange(value);
+                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                  onFieldChange(name, value, (n, v) => form.setValue(n as any, v as any));
+                },
+              }
+            : formField;
+
+          return (
+            <FormItem className={field.gridColumn === 'full' ? 'md:col-span-2' : ''}>
+              <FormLabel>{label}</FormLabel>
+              <FormControl>
+                {renderFormControl(type, wrappedFormField, placeholder, options, step)}
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          );
+        }}
       />
     );
   };

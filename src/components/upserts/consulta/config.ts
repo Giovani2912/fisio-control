@@ -29,10 +29,19 @@ export const consultaSchema = z.object({
 
 export type ConsultaFormData = z.infer<typeof consultaSchema>;
 
+function roundedHour(offsetHours = 0): Date {
+  const d = new Date();
+  d.setMinutes(0);
+  d.setSeconds(0);
+  d.setMilliseconds(0);
+  d.setHours(d.getHours() + offsetHours);
+  return d;
+}
+
 export const consultaDefaultValues: ConsultaFormData = {
   data: new Date(),
-  horaInicio: new Date(),
-  horaFim: new Date(),
+  horaInicio: roundedHour(0),
+  horaFim: roundedHour(1),
   tipo: 'AVALIACAO',
   status: 'AGENDADA',
   observacoes: '',
@@ -57,7 +66,8 @@ export const consultaFields: FormFieldConfig[] = [
         name: 'horaInicio',
         label: 'Hora Início',
         type: 'time',
-        placeholder: 'Selecione a hora de início...',   
+        placeholder: 'Selecione a hora de início...',
+        step: 3600,
     },
     {
         name: 'horaFim',

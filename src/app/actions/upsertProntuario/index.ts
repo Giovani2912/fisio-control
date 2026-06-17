@@ -58,12 +58,12 @@ DADOS DA SESSÃO:
 ${validatedData.observacoes ? `- Observações adicionais: ${validatedData.observacoes}` : ''}
 
 INSTRUÇÕES:
-- Siga rigorosamente o formato SOAP com os títulos: S (Subjetivo), O (Objetivo), A (Avaliação), P (Plano)
+- Siga rigorosamente o formato SOAP com os títulos EXATOS (sem formatação markdown/negrito): "S (Subjetivo):", "O (Objetivo):", "A (Avaliação):", "P (Plano):" — cada seção começa com esse cabeçalho em uma nova linha, seguido do conteúdo na próxima linha
 - Use terminologia clínica adequada à fisioterapia
 - Seja objetivo e conciso em cada seção
 - Não inclua dados identificadores do paciente (nome, CPF, etc.)
 - Escreva em 3ª pessoa (ex: "Paciente refere...")
-- Retorne APENAS o texto do prontuário, sem explicações adicionais
+- Retorne APENAS o texto do prontuário, sem explicações adicionais, sem título "EVOLUÇÃO CLÍNICA" ou similar
 
 ⚠️ AVISO: Este texto é gerado por IA como copiloto clínico e necessita da revisão e validação do profissional fisioterapeuta portador do CREFITO.`;
 

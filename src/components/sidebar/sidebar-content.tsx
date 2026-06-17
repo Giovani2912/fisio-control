@@ -29,11 +29,6 @@ const menuItems = [
     icon: Calendar,
     label: 'Consultas',
   },
-  // {
-  //   href: '/admin/avaliacoes',
-  //   icon: Info,
-  //   label: 'Avaliações',
-  // },
 ];
 
 export default function SidebarContent({

@@ -1,11 +1,12 @@
 'use client';
 
-import { ColumnDef } from '@tanstack/react-table';
+import { ColumnDef, Column } from '@tanstack/react-table';
 import { Badge } from '@/components/ui/badge';
 import { formatDate } from '@/lib/utils';
+import { DeleteConsultaDialog } from '../components/delete-dialog';
+import { ArrowDownIcon, ArrowUpDownIcon, ArrowUpIcon } from 'lucide-react';
+import { TIPO_COLORS, TIPO_LABELS } from '@/constants/consulta';
 
-// This type is used to define the shape of our data.
-// You can use a Zod schema here if you want.
 export type Consulta = {
   id: string;
   paciente: string;
@@ -17,18 +18,44 @@ export type Consulta = {
   valorConsulta: string;
 };
 
+function SortableHeader({
+  column,
+  label,
+}: {
+  column: Column<Consulta, unknown>;
+  label: string;
+}) {
+  const sorted = column.getIsSorted();
+  return (
+    <button
+      className="flex items-center gap-1 hover:text-foreground"
+      onClick={() => column.toggleSorting(sorted === 'asc')}
+    >
+      {label}
+      {sorted === 'asc' ? (
+        <ArrowUpIcon className="h-3 w-3" />
+      ) : sorted === 'desc' ? (
+        <ArrowDownIcon className="h-3 w-3" />
+      ) : (
+        <ArrowUpDownIcon className="h-3 w-3 opacity-40" />
+      )}
+    </button>
+  );
+}
+
 export const columns: ColumnDef<Consulta>[] = [
   {
     accessorKey: 'paciente',
-    header: 'Paciente',
+    enableSorting: true,
+    header: ({ column }) => <SortableHeader column={column} label="Paciente" />,
   },
   {
     accessorKey: 'data',
-    header: 'Data',
+    enableSorting: true,
+    header: ({ column }) => <SortableHeader column={column} label="Data" />,
     cell: ({ row }) => {
       const dateString = row.getValue('data') as string;
       if (!dateString) return '-';
-      // Parse YYYY-MM-DD as local date to avoid UTC midnight shifting the day (e.g. Brazil)
       const [y, m, d] = dateString.split('-').map(Number);
       const date = new Date(y, m - 1, d);
       return formatDate(date);
@@ -36,39 +63,24 @@ export const columns: ColumnDef<Consulta>[] = [
   },
   {
     accessorKey: 'horaInicio',
-    header: 'Hora Início',
+    enableSorting: true,
+    header: ({ column }) => (
+      <SortableHeader column={column} label="Hora Início" />
+    ),
   },
   {
     accessorKey: 'tipo',
     header: 'Tipo',
+    filterFn: 'equalsString',
     cell: ({ row }) => {
       const value = row.getValue('tipo') as string | null;
       if (!value) return '-';
 
-      // Different pill colors for each TipoConsulta
-      const tipo = value.toUpperCase();
-
-      const tipoClasses: Record<string, string> = {
-        AVALIACAO:
-          'bg-sky-100 text-sky-800 dark:bg-sky-500/15 dark:text-sky-300',
-        SESSAO:
-          'bg-violet-100 text-violet-800 dark:bg-violet-500/15 dark:text-violet-300',
-        RETORNO:
-          'bg-amber-100 text-amber-800 dark:bg-amber-500/15 dark:text-amber-300',
-        REAVALIACAO:
-          'bg-emerald-100 text-emerald-800 dark:bg-emerald-500/15 dark:text-emerald-300',
-      };
-
-      const tipoLabel: Record<string, string> = {
-        AVALIACAO: 'Avaliação',
-        SESSAO: 'Sessão',
-        RETORNO: 'Retorno',
-        REAVALIACAO: 'Reavaliação',
-      };
+      const tipo = value.toUpperCase() as keyof typeof TIPO_COLORS;
 
       return (
-        <Badge variant="outline" className={tipoClasses[tipo] ?? ''}>
-          {tipoLabel[tipo] ?? value}
+        <Badge variant="outline" className={TIPO_COLORS[tipo] ?? ''}>
+          {TIPO_LABELS[tipo] ?? value}
         </Badge>
       );
     },
@@ -76,6 +88,7 @@ export const columns: ColumnDef<Consulta>[] = [
   {
     accessorKey: 'status',
     header: 'Status',
+    filterFn: 'equalsString',
     cell: ({ row }) => {
       const value = row.getValue('status') as string | null;
       if (!value) return '-';
@@ -103,5 +116,16 @@ export const columns: ColumnDef<Consulta>[] = [
   {
     accessorKey: 'valorConsulta',
     header: 'Valor',
+  },
+  {
+    id: 'actions',
+    header: '',
+    cell: ({ row }) => (
+      <DeleteConsultaDialog
+        id={row.original.id}
+        paciente={row.original.paciente}
+        data={row.original.data}
+      />
+    ),
   },
 ];

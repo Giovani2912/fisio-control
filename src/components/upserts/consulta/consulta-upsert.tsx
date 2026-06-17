@@ -27,6 +27,23 @@ const UpsertConsulta = ({
   const params = useParams();
   const pacienteId = params.id as string; // Pega o ID do paciente da URL
 
+  const handleFieldChange = (
+    name: string,
+    value: unknown,
+    setValue: (name: string, value: unknown) => void,
+  ) => {
+    if (name === 'horaInicio' && value instanceof Date) {
+      const rounded = new Date(value);
+      rounded.setMinutes(0);
+      rounded.setSeconds(0);
+      rounded.setMilliseconds(0);
+      setValue('horaInicio', rounded);
+      const fim = new Date(rounded);
+      fim.setHours(fim.getHours() + 1);
+      setValue('horaFim', fim);
+    }
+  };
+
   const handleSubmit = async (data: ConsultaFormData) => {
     try {
       await upsertConsulta({
@@ -67,6 +84,7 @@ const UpsertConsulta = ({
       }
       onSubmit={handleSubmit}
       entityId={avaliacaoId}
+      onFieldChange={handleFieldChange}
     />
   );
 };

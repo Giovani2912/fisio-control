@@ -160,7 +160,7 @@ const UpsertProntuario = ({ isOpen, setIsOpen, initialData }: UpsertProntuarioPr
                     <FormControl>
                       {fieldConfig.type === 'select' ? (
                         <Select onValueChange={field.onChange} value={(field.value as string) ?? ''}>
-                          <SelectTrigger>
+                          <SelectTrigger className="w-full">
                             <SelectValue placeholder={fieldConfig.placeholder} />
                           </SelectTrigger>
                           <SelectContent>

@@ -120,27 +120,7 @@ export default async function PacienteInfo({
         </Card>
       </div>
 
-      {/* Evolução Clínica — full width */}
-      <Card>
-        <CardHeader className="pb-3">
-          <div className="flex items-center justify-between">
-            <div>
-              <CardTitle>Evolução Clínica</CardTitle>
-              <p className="text-sm text-muted-foreground mt-0.5">
-                {paciente.prontuarios.length === 0
-                  ? 'Nenhuma sessão registrada ainda'
-                  : `${paciente.prontuarios.length} sessão${paciente.prontuarios.length > 1 ? 'ões' : ''} registrada${paciente.prontuarios.length > 1 ? 's' : ''}`}
-              </p>
-            </div>
-            {paciente.prontuarios.length > 0 && <CreateProntuarioButton />}
-          </div>
-        </CardHeader>
-        <CardContent>
-          <ProntuarioTimeline prontuarios={prontuariosSerializados} />
-        </CardContent>
-      </Card>
-
-      {/* Avaliação Inicial */}
+ {/* Avaliação Inicial */}
       <Card>
         <CardHeader>
           <div className="flex items-center justify-between">
@@ -206,7 +186,25 @@ export default async function PacienteInfo({
           )}
         </CardContent>
       </Card>
-
+      {/* Evolução Clínica — full width */}
+      <Card>
+        <CardHeader className="pb-3">
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle>Evolução Clínica</CardTitle>
+              <p className="text-sm text-muted-foreground mt-0.5">
+                {paciente.prontuarios.length === 0
+                  ? 'Nenhuma sessão registrada ainda'
+                  : `${paciente.prontuarios.length} sessão${paciente.prontuarios.length > 1 ? 'ões' : ''} registrada${paciente.prontuarios.length > 1 ? 's' : ''}`}
+              </p>
+            </div>
+            {paciente.prontuarios.length > 0 && <CreateProntuarioButton />}
+          </div>
+        </CardHeader>
+        <CardContent>
+          <ProntuarioTimeline prontuarios={prontuariosSerializados} />
+        </CardContent>
+      </Card>
     </div>
   );
 }

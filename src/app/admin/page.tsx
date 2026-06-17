@@ -5,10 +5,10 @@ import prisma from '@/lib/prisma';
 import Link from 'next/link';
 import { Users, Calendar, DollarSign, ArrowRight } from 'lucide-react';
 import { CreatePacienteButton } from '@/components/upserts/paciente/paciente-buttons';
-import { CreateAvaliacaoButton } from '@/components/upserts/avaliacao/avaliacao-buttons';
 import { CreateConsultaButton } from '@/components/upserts/consulta/consulta-buttons';
 import { fetchPacientes } from '@/app/actions/pacientes/fetch';
 import type { SelectOption } from '@/components/upserts/generic-upsert';
+import { TIPO_COLORS, TIPO_LABELS, TIPO_BORDER_COLORS } from '@/constants/consulta';
 
 export default async function Dashboard() {
   // Calcular datas
@@ -220,7 +220,7 @@ export default async function Dashboard() {
                 {consultasProximas.map(consulta => (
                   <div
                     key={consulta.id}
-                    className="flex items-center justify-between p-3 rounded-lg hover:bg-gray-50 transition border-l-4 border-green-500"
+                    className={`flex items-center justify-between p-3 rounded-lg hover:bg-gray-50 transition border-l-4 ${TIPO_BORDER_COLORS[consulta.tipo]}`}
                   >
                     <div className="min-w-0 flex-1">
                       <p className="font-medium text-sm">{consulta.paciente.nome}</p>
@@ -229,12 +229,14 @@ export default async function Dashboard() {
                           weekday: 'short',
                           day: 'numeric',
                           month: 'short',
+                        })}{', '}
+                        {new Date(consulta.horaInicio).toLocaleTimeString('pt-BR', {
                           hour: '2-digit',
                           minute: '2-digit',
                         })}
                       </p>
-                      <span className="inline-block mt-1 text-xs bg-green-100 text-green-700 px-2 py-1 rounded">
-                        {consulta.tipo}
+                      <span className={`inline-block mt-1 text-xs px-2 py-1 rounded ${TIPO_COLORS[consulta.tipo]}`}>
+                        {TIPO_LABELS[consulta.tipo]}
                       </span>
                     </div>
                     <Link href={`/admin/consultas/${consulta.id}`}>
