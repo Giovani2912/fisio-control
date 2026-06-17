@@ -21,12 +21,12 @@ export const GenericCreateButton = ({
   return (
     <>
       <Button
-        className="cursor-pointer font-bold"
+        className="font-bold"
         onClick={() => setDialogIsOpen(true)}
         variant={variant}
       >
-        <span className="hidden md:block">{text}</span>
         <PlusIcon />
+        <span className="hidden md:block">{text}</span>
       </Button>
       {children(dialogIsOpen, setDialogIsOpen)}
     </>
@@ -60,7 +60,6 @@ export function GenericEditButton<T>({
       <Button
         variant={variant}
         size={size}
-        className="cursor-pointer"
         onClick={() => setDialogIsOpen(true)}
       >
         <PencilIcon className={iconColor} />

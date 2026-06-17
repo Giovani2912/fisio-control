@@ -31,7 +31,7 @@ import { useState, useEffect, type Ref } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { format } from 'date-fns';
-import { Calendar as CalendarIcon, Clock } from 'lucide-react';
+import { Calendar as CalendarIcon, Clock, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Calendar } from '@/components/ui/calendar';
 import {
@@ -91,7 +91,7 @@ const renderFormControl = (
           onValueChange={(v) => formField.onChange(v)}
           value={(formField.value as string | undefined) ?? ''}
         >
-          <SelectTrigger>
+          <SelectTrigger className="w-full">
             <SelectValue placeholder={placeholder} />
           </SelectTrigger>
           <SelectContent>
@@ -298,20 +298,29 @@ function GenericUpsert<T extends Record<string, unknown>>({
           <form
             // @ts-expect-error Submit handler types align structurally
             onSubmit={form.handleSubmit(handleSubmit)}
-            className="space-y-4"
+            className="space-y-6"
           >
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
               {fields.map(renderField)}
             </div>
 
-            <DialogFooter>
+            <DialogFooter className="border-t pt-4">
               <DialogClose asChild>
                 <Button type="button" variant="outline" disabled={loading}>
                   Cancelar
                 </Button>
               </DialogClose>
               <Button type="submit" disabled={loading}>
-                {loading ? 'Salvando...' : isUpdate ? 'Atualizar' : 'Cadastrar'}
+                {loading ? (
+                  <>
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    Salvando...
+                  </>
+                ) : isUpdate ? (
+                  'Atualizar'
+                ) : (
+                  'Cadastrar'
+                )}
               </Button>
             </DialogFooter>
           </form>

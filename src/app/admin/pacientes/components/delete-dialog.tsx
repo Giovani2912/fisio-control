@@ -46,7 +46,7 @@ export const DeletePacienteDialog = ({ paciente }: { paciente: PacienteFormData 
                 <Button
                     variant="outline"
                     size="icon"
-                    className="text-muted-foreground transition-colors hover:border-red-200 hover:text-red-700 hover:cursor-pointer"
+                    className="text-muted-foreground transition-colors hover:border-red-200 hover:text-red-700"
                 >
                     <TrashIcon className="h-4 w-4 text-red-600" />
                 </Button>
@@ -71,7 +71,7 @@ export const DeletePacienteDialog = ({ paciente }: { paciente: PacienteFormData 
                 </DialogHeader>
                 <DialogFooter className="flex gap-4 sm:gap-2">
                     <DialogClose asChild>
-                        <Button variant="outline" disabled={isDeleting} className="hover:bg-red-50 hover:text-red-700 hover:cursor-pointer">
+                        <Button variant="outline" disabled={isDeleting}>
                             Cancelar
                         </Button>
                     </DialogClose>
@@ -79,7 +79,7 @@ export const DeletePacienteDialog = ({ paciente }: { paciente: PacienteFormData 
                         variant="destructive"
                         onClick={handleDelete}
                         disabled={isDeleting}
-                        className="gap-2 hover:bg-red-400 hover:text-white hover:cursor-pointer"
+                        className="gap-2 hover:bg-red-400 hover:text-white"
                     >
                         {isDeleting ? (
                             <>
