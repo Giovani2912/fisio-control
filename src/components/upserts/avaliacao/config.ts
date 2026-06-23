@@ -1,4 +1,5 @@
 import { FormFieldConfig } from '../generic-upsert';
+import { diagnosticosPorRegiao } from './diagnosticos';
 import { z } from 'zod';
 
 export const avaliacaoSchema = z.object({
@@ -51,9 +52,13 @@ export const avaliacaoFields: FormFieldConfig[] = [
   {
     name: 'diagnostico',
     label: 'Diagnóstico',
-    type: 'textarea',
-    placeholder: 'Digite o diagnóstico...',
+    type: 'combobox',
+    placeholder: 'Selecione ou digite o diagnóstico...',
     gridColumn: 'full',
+    groups: diagnosticosPorRegiao.map(grupo => ({
+      label: grupo.regiao,
+      options: grupo.itens.map(item => ({ value: item, label: item })),
+    })),
   },
   {
     name: 'objetivos',
