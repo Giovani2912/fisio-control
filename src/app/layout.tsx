@@ -41,7 +41,7 @@ export default function RootLayout({
           <div className="h-screen bg-[#f1f1f1] lg:grid lg:grid-cols-[1fr_7fr]">
             <Sidebar />
             <div className="lg:col-start-2 overflow-y-auto">
-              <div className="flex justify-end px-6 py-3 gap-2">
+              <div className="flex justify-end px-4 py-3 gap-2 sm:px-6">
                 <Show when="signed-out">
                   <SignInButton mode="modal">
                     <Button variant="outline" size="sm">
@@ -67,7 +67,7 @@ export default function RootLayout({
                   </SignOutButton>
                 </Show>
               </div>
-              <div className="px-6 py-4">{children}</div>
+              <div className="px-4 py-4 sm:px-6">{children}</div>
             </div>
           </div>
 

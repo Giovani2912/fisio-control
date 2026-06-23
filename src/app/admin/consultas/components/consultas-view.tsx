@@ -1,12 +1,13 @@
 'use client';
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { CalendarDaysIcon, CalendarIcon, LayoutListIcon } from 'lucide-react';
 import { DataTable } from '../data/data-table';
-import { columns, Consulta } from '../data/columns';
+import { getColumns, Consulta } from '../data/columns';
 import { CalendarMonthlyView } from './calendar-monthly';
 import { CalendarWeeklyView } from './calendar-weekly';
+import type { SelectOption } from '@/components/upserts/generic-upsert';
 
 type ViewMode = 'table' | 'weekly' | 'monthly';
 
@@ -16,8 +17,15 @@ const VIEWS = [
   { id: 'monthly' as ViewMode, label: 'Mês', Icon: CalendarDaysIcon },
 ];
 
-export function ConsultasView({ consultas }: { consultas: Consulta[] }) {
+export function ConsultasView({
+  consultas,
+  pacienteOptions,
+}: {
+  consultas: Consulta[];
+  pacienteOptions: SelectOption[];
+}) {
   const [view, setView] = useState<ViewMode>('table');
+  const columns = useMemo(() => getColumns(pacienteOptions), [pacienteOptions]);
 
   return (
     <div className="space-y-4">
@@ -41,8 +49,18 @@ export function ConsultasView({ consultas }: { consultas: Consulta[] }) {
           <DataTable columns={columns} data={consultas} />
         </div>
       )}
-      {view === 'weekly' && <CalendarWeeklyView consultas={consultas} />}
-      {view === 'monthly' && <CalendarMonthlyView consultas={consultas} />}
+      {view === 'weekly' && (
+        <CalendarWeeklyView
+          consultas={consultas}
+          pacienteOptions={pacienteOptions}
+        />
+      )}
+      {view === 'monthly' && (
+        <CalendarMonthlyView
+          consultas={consultas}
+          pacienteOptions={pacienteOptions}
+        />
+      )}
     </div>
   );
 }

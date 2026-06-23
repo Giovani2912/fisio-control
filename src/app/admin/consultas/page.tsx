@@ -33,6 +33,12 @@ async function getData(userId: string): Promise<ConsultaRow[]> {
           minimumFractionDigits: 2,
           maximumFractionDigits: 2,
         })}`,
+        pacienteId: consulta.pacienteId,
+        observacoes: consulta.observacoes ?? '',
+        dataValue: consulta.data,
+        horaInicioValue: consulta.horaInicio,
+        horaFimValue: consulta.horaFim,
+        valorConsultaValue: Number(consulta.valorConsulta),
       })),
     );
   return data;
@@ -52,7 +58,7 @@ export default async function Consultas() {
       <Title title="Consultas" createButton={<CreateConsultaButton pacienteOptions={pacienteOptions} />} />
 
       <div className="mt-8 w-full">
-        <ConsultasView consultas={consultas} />
+        <ConsultasView consultas={consultas} pacienteOptions={pacienteOptions} />
       </div>
     </>
   );

@@ -3,9 +3,10 @@
 import { ColumnDef, Column } from '@tanstack/react-table';
 import { Badge } from '@/components/ui/badge';
 import { formatDate } from '@/lib/utils';
-import { DeleteConsultaDialog } from '../components/delete-dialog';
+import { ConsultaActions } from '../components/consulta-actions';
 import { ArrowDownIcon, ArrowUpDownIcon, ArrowUpIcon } from 'lucide-react';
 import { TIPO_COLORS, TIPO_LABELS } from '@/constants/consulta';
+import type { SelectOption } from '@/components/upserts/generic-upsert';
 
 export type Consulta = {
   id: string;
@@ -16,6 +17,13 @@ export type Consulta = {
   tipo: string;
   status: string;
   valorConsulta: string;
+  // Valores brutos usados para edição (não exibidos na tabela)
+  pacienteId: string;
+  observacoes: string;
+  dataValue: Date;
+  horaInicioValue: Date;
+  horaFimValue: Date;
+  valorConsultaValue: number;
 };
 
 function SortableHeader({
@@ -43,7 +51,9 @@ function SortableHeader({
   );
 }
 
-export const columns: ColumnDef<Consulta>[] = [
+export const getColumns = (
+  pacienteOptions: SelectOption[],
+): ColumnDef<Consulta>[] => [
   {
     accessorKey: 'paciente',
     enableSorting: true,
@@ -121,10 +131,10 @@ export const columns: ColumnDef<Consulta>[] = [
     id: 'actions',
     header: '',
     cell: ({ row }) => (
-      <DeleteConsultaDialog
-        id={row.original.id}
-        paciente={row.original.paciente}
-        data={row.original.data}
+      <ConsultaActions
+        consulta={row.original}
+        pacienteOptions={pacienteOptions}
+        className="justify-end"
       />
     ),
   },
