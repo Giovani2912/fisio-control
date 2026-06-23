@@ -1,14 +1,16 @@
-import { DataTable } from './data/data-table';
-import { columns, Consulta as ConsultaRow } from './data/columns';
+import { Consulta as ConsultaRow } from './data/columns';
 import prisma from '@/lib/prisma';
 import Title from '@/components/title';
 import { CreateConsultaButton } from '@/components/upserts/consulta/consulta-buttons';
 import { fetchPacientes } from '@/app/actions/pacientes/fetch';
 import type { SelectOption } from '@/components/upserts/generic-upsert';
+import { ConsultasView } from './components/consultas-view';
+import { auth } from '@clerk/nextjs/server';
 
-async function getData(): Promise<ConsultaRow[]> {
+async function getData(userId: string): Promise<ConsultaRow[]> {
   const data = await prisma.consulta
     .findMany({
+      where: { paciente: { clerkUserId: userId } },
       orderBy: { data: 'desc' },
       include: { paciente: true },
     })
@@ -37,7 +39,8 @@ async function getData(): Promise<ConsultaRow[]> {
 }
 
 export default async function Consultas() {
-  const consultas: ConsultaRow[] = await getData();
+  const { userId } = await auth();
+  const consultas: ConsultaRow[] = await getData(userId!);
   const pacientes = await fetchPacientes();
   const pacienteOptions: SelectOption[] = pacientes.map(p => ({
     value: p.id,
@@ -48,10 +51,8 @@ export default async function Consultas() {
     <>
       <Title title="Consultas" createButton={<CreateConsultaButton pacienteOptions={pacienteOptions} />} />
 
-      <div className="mt-8 w-full rounded-2xl">
-        <div className="mt-4 w-full space-y-2 rounded-2xl bg-white">
-          <DataTable columns={columns} data={consultas} />
-        </div>
+      <div className="mt-8 w-full">
+        <ConsultasView consultas={consultas} />
       </div>
     </>
   );

@@ -2,6 +2,7 @@
 import db from '../../../lib/prisma';
 import { upsertAvaliacaoSchema } from './schema';
 import { revalidatePath } from 'next/cache';
+import { requireUserId, assertPacienteOwnership } from '@/lib/auth-guards';
 
 interface UpsertAvaliacaoParams {
   id?: string;
@@ -15,11 +16,14 @@ interface UpsertAvaliacaoParams {
 }
 
 export const upsertAvaliacao = async (params: UpsertAvaliacaoParams) => {
+  const userId = await requireUserId();
   const validatedData = upsertAvaliacaoSchema.parse(params);
+
+  await assertPacienteOwnership(validatedData.pacienteId, userId);
 
   if (validatedData.id) {
     await db.avaliacao.update({
-      where: { id: validatedData.id },
+      where: { id: validatedData.id, paciente: { clerkUserId: userId } },
       data: {
         pacienteId: validatedData.pacienteId,
         queixaPrincipal: validatedData.queixaPrincipal,
@@ -50,9 +54,15 @@ export const upsertAvaliacao = async (params: UpsertAvaliacaoParams) => {
 };
 
 export const deleteAvaliacao = async (id: string) => {
-  // Revalida a página do paciente específico
-  const deleted = await db.avaliacao.delete({
-    where: { id },
+  const userId = await requireUserId();
+
+  const avaliacao = await db.avaliacao.findFirst({
+    where: { id, paciente: { clerkUserId: userId } },
+    select: { pacienteId: true },
   });
-  revalidatePath(`/admin/pacientes/${deleted.pacienteId}`);
+  if (!avaliacao) throw new Error('Avaliação não encontrada');
+
+  await db.avaliacao.delete({ where: { id } });
+  revalidatePath('/admin/avaliacoes');
+  revalidatePath(`/admin/pacientes/${avaliacao.pacienteId}`);
 };

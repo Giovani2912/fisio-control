@@ -2,7 +2,7 @@
 import db from '../../../lib/prisma';
 import { upsertConsultaSchema } from './schema';
 import { revalidatePath } from 'next/cache';
-import { Prisma } from '@prisma/client';
+import { requireUserId, assertPacienteOwnership } from '@/lib/auth-guards';
 
 interface UpsertConsultaParams {
   id?: string;
@@ -17,11 +17,14 @@ interface UpsertConsultaParams {
 }
 
 export const upsertConsulta = async (params: UpsertConsultaParams) => {
+  const userId = await requireUserId();
   const validatedData = upsertConsultaSchema.parse(params);
+
+  await assertPacienteOwnership(validatedData.paciente, userId);
 
   if (validatedData.id) {
     await db.consulta.update({
-      where: { id: validatedData.id },
+      where: { id: validatedData.id, paciente: { clerkUserId: userId } },
       data: {
         data: validatedData.data,
         horaInicio: validatedData.horaInicio,
@@ -53,9 +56,15 @@ export const upsertConsulta = async (params: UpsertConsultaParams) => {
 };
 
 export const deleteConsulta = async (id: string) => {
-  // Revalida a página do paciente específico
-  const deleted = await db.consulta.delete({
-    where: { id },
+  const userId = await requireUserId();
+
+  const consulta = await db.consulta.findFirst({
+    where: { id, paciente: { clerkUserId: userId } },
+    select: { pacienteId: true },
   });
-  revalidatePath(`/admin/pacientes/${deleted.pacienteId}`);
+  if (!consulta) throw new Error('Consulta não encontrada');
+
+  await db.consulta.delete({ where: { id } });
+  revalidatePath('/admin/consultas');
+  revalidatePath(`/admin/pacientes/${consulta.pacienteId}`);
 };

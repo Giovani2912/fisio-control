@@ -1,9 +1,13 @@
 import prisma from '@/lib/prisma';
-import Title from '@/components/title';
+import { auth } from '@clerk/nextjs/server';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { CreateAvaliacaoButton, EditAvaliacaoButton } from '@/components/upserts/avaliacao/avaliacao-buttons';
 import { EditPacienteButton } from '@/components/upserts/paciente/paciente-buttons';
 import { DeleteAvaliacaoDialog } from '../../avaliacoes/components/delete-dialog';
+import { CreateProntuarioButton } from '@/components/upserts/prontuario/prontuario-buttons';
+import { ProntuarioTimeline } from '@/components/prontuario-timeline';
+import { format } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
 
 export default async function PacienteInfo({
   params,
@@ -11,115 +15,83 @@ export default async function PacienteInfo({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const paciente = await prisma.paciente.findUnique({
-    where: { id },
+  const { userId } = await auth();
+  const paciente = await prisma.paciente.findFirst({
+    where: { id, clerkUserId: userId! },
     include: {
       avaliacoes: true,
       consultas: true,
       planosTratamento: true,
-      prontuarios: true,
+      prontuarios: { orderBy: { criadoEm: 'desc' } },
       pagamentos: true,
     },
   });
 
   if (!paciente) {
-    return (
-      <>
-        <Title title="Paciente" createButton={null} />
-        <div className="text-muted-foreground">Paciente não encontrado.</div>
-      </>
-    );
+    return <div className="text-muted-foreground mt-8">Paciente não encontrado.</div>;
   }
 
-  return (
-    <>
-      <div className="mt-8 mb-4 flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-gray-900">{paciente.nome}</h1>
-        <div className="flex gap-2">
+  const prontuariosSerializados = paciente.prontuarios.map((p) => ({
+    id: p.id,
+    criadoEm: p.criadoEm.toISOString(),
+    regiaoCorpo: p.regiaoCorpo,
+    nivelDor: p.nivelDor,
+    respostaTratamento: p.respostaTratamento,
+    evolucao: p.evolucao,
+    queixaDoDia: p.queixaDoDia,
+    tecnicas: p.tecnicas,
+    observacoes: p.observacoes,
+  }));
 
-          <EditPacienteButton
-            paciente={{
-              id: paciente.id,
-              nome: paciente.nome,
-              cpf: paciente.cpf,
-              rg: paciente.rg || '',
-              email: paciente.email || '',
-              celular: paciente.celular,
-              idade: String(paciente.idade),
-              sexo: paciente.sexo,
-              convenio: paciente.convenio ?? 'HAOC',
-              numeroConvenio: paciente.numeroConvenio || '',
-              contato_emergencia: paciente.contato_emergencia || '',
-            }}
-          />
-        </div>
+  return (
+    <div className="space-y-6 mt-8">
+
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <h1 className="text-2xl font-bold text-gray-900">{paciente.nome}</h1>
+        <EditPacienteButton
+          paciente={{
+            id: paciente.id,
+            nome: paciente.nome,
+            cpf: paciente.cpf,
+            rg: paciente.rg || '',
+            email: paciente.email || '',
+            celular: paciente.celular,
+            idade: String(paciente.idade),
+            sexo: paciente.sexo,
+            convenio: paciente.convenio ?? 'HAOC',
+            numeroConvenio: paciente.numeroConvenio || '',
+            contato_emergencia: paciente.contato_emergencia || '',
+          }}
+        />
       </div>
 
+      {/* Dados + Resumo */}
       <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
         <Card className="md:col-span-2">
           <CardHeader>
-            <CardTitle className='flex items-center justify-between'>Dados do Paciente
-
-              <EditPacienteButton
-                paciente={{
-                  id: paciente.id,
-                  nome: paciente.nome,
-                  cpf: paciente.cpf,
-                  rg: paciente.rg || '',
-                  email: paciente.email || '',
-                  celular: paciente.celular,
-                  idade: String(paciente.idade),
-                  sexo: paciente.sexo,
-                  convenio: paciente.convenio ?? 'HAOC',
-                  numeroConvenio: paciente.numeroConvenio || '',
-                  contato_emergencia: paciente.contato_emergencia || '',
-                }}
-              />
-            </CardTitle>
+            <CardTitle>Dados do Paciente</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-              <div>
-                <div className="text-muted-foreground text-sm">CPF</div>
-                <div className="font-medium">{paciente.cpf}</div>
-              </div>
-              <div>
-                <div className="text-muted-foreground text-sm">RG</div>
-                <div className="font-medium">{paciente.rg || '-'}</div>
-              </div>
-              <div>
-                <div className="text-muted-foreground text-sm">Email</div>
-                <div className="font-medium">{paciente.email || '-'}</div>
-              </div>
-              <div>
-                <div className="text-muted-foreground text-sm">Celular</div>
-                <div className="font-medium">{paciente.celular}</div>
-              </div>
-              <div>
-                <div className="text-muted-foreground text-sm">Idade</div>
-                <div className="font-medium">{paciente.idade}</div>
-              </div>
-              <div>
-                <div className="text-muted-foreground text-sm">Sexo</div>
-                <div className="font-medium">{paciente.sexo}</div>
-              </div>
-              <div>
-                <div className="text-muted-foreground text-sm">Convênio</div>
-                <div className="font-medium">{paciente.convenio || '-'}</div>
-              </div>
-              <div>
-                <div className="text-muted-foreground text-sm">
-                  Número do Convênio
+            <div className="grid grid-cols-2 gap-x-8 gap-y-4">
+              {[
+                { label: 'CPF', value: paciente.cpf },
+                { label: 'RG', value: paciente.rg || '-' },
+                { label: 'Email', value: paciente.email || '-' },
+                { label: 'Celular', value: paciente.celular },
+                { label: 'Idade', value: paciente.idade },
+                { label: 'Sexo', value: paciente.sexo },
+                { label: 'Convênio', value: paciente.convenio || '-' },
+                { label: 'Nº Convênio', value: paciente.numeroConvenio || '-' },
+              ].map(({ label, value }) => (
+                <div key={label}>
+                  <div className="text-xs text-muted-foreground">{label}</div>
+                  <div className="text-sm font-medium text-gray-900">{value}</div>
                 </div>
-                <div className="font-medium">
-                  {paciente.numeroConvenio || '-'}
-                </div>
-              </div>
-              <div className="md:col-span-2">
-                <div className="text-muted-foreground text-sm">
-                  Contato de Emergência
-                </div>
-                <div className="font-medium">
+              ))}
+              <div className="col-span-2">
+                <div className="text-xs text-muted-foreground">Contato de Emergência</div>
+                <div className="text-sm font-medium text-gray-900">
                   {paciente.contato_emergencia || '-'}
                 </div>
               </div>
@@ -133,133 +105,108 @@ export default async function PacienteInfo({
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
-              <div className="flex items-center justify-between">
-                <span className="text-muted-foreground text-sm">Consultas</span>
-                <span className="font-semibold">
-                  {paciente.consultas.length}
-                </span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-muted-foreground text-sm">
-                  Avaliações
-                </span>
-                <span className="font-semibold">
-                  {paciente.avaliacoes.length}
-                </span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-muted-foreground text-sm">
-                  Planos de Tratamento
-                </span>
-                <span className="font-semibold">
-                  {paciente.planosTratamento.length}
-                </span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-muted-foreground text-sm">
-                  Prontuários
-                </span>
-                <span className="font-semibold">
-                  {paciente.prontuarios.length}
-                </span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-muted-foreground text-sm">
-                  Pagamentos
-                </span>
-                <span className="font-semibold">
-                  {paciente.pagamentos.length}
-                </span>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      <div className="mt-6 grid grid-cols-1 gap-6 md:grid-cols-2 ">
-        <Card className=" md:col-span-1">
-          <CardHeader>
-            <CardTitle className='flex items-center justify-between'>Evolução</CardTitle>
-            <CardContent>Building...</CardContent>
-          </CardHeader>
-        </Card>
-
-        <Card>
-
-          <CardHeader>
-            <CardTitle className='flex items-center justify-between'>Avaliação inicial
-              <CreateAvaliacaoButton text="Cadastrar Avaliação" />
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {paciente.avaliacoes.map(avaliacao => (
-                <div
-                  key={avaliacao.id}
-                  className="rounded-md border border-gray-200 p-4 relative flex flex-col gap-3"
-                >
-                  <div className="absolute top-2 right-2 flex gap-2">
-                    <EditAvaliacaoButton
-                      avaliacao={{
-                        id: avaliacao.id,
-                        data: avaliacao.data,
-                        historiaDoenca: avaliacao.historiaDoenca ?? undefined,
-                        queixaPrincipal: avaliacao.queixaPrincipal,
-                        exameFisico: avaliacao.exameFisico ?? undefined,
-                        diagnostico: avaliacao.diagnostico ?? undefined,
-                        objetivos: avaliacao.objetivos ?? undefined,
-                      }}
-                    />
-
-                    <DeleteAvaliacaoDialog
-                      avaliacao={{
-                        id: avaliacao.id,
-                        data: avaliacao.data,
-                        queixaPrincipal: avaliacao.queixaPrincipal,
-                        historiaDoenca: avaliacao.historiaDoenca ?? undefined,
-                        exameFisico: avaliacao.exameFisico ?? undefined,
-                        diagnostico: avaliacao.diagnostico ?? undefined,
-                        objetivos: avaliacao.objetivos ?? undefined,
-                      }}
-                    />
-                  </div>
-                  <div className="text-muted-foreground text-sm">Data</div>
-                  <div className="font-medium">
-                    {avaliacao.data?.toLocaleDateString() || '-'}
-                  </div>
-                  <hr className="border-gray-200" />
-
-                  <div className="text-muted-foreground text-sm">Queixa Principal</div>
-                  <div className="font-medium">
-                    {avaliacao.queixaPrincipal || '-'}
-                  </div>
-                  <hr className="border-gray-200" />
-
-                  <div className="text-muted-foreground text-sm">História da Doença</div>
-                  <div className="font-medium">
-                    {avaliacao.historiaDoenca || '-'}
-                  </div>
-                  <hr className="border-gray-200" />
-
-                  <div className="text-muted-foreground text-sm">Exame Físico</div>
-                  <div className="font-medium">
-                    {avaliacao.exameFisico || '-'}
-                  </div>
-                  <hr className="border-gray-200" />
-
-                  <div className="text-muted-foreground text-sm">Diagnóstico</div>
-                  <div className="font-medium">
-                    {avaliacao.diagnostico || '-'}
-                  </div>
-                  <hr className="border-gray-200" />
-                  <div className="text-muted-foreground text-sm">Objetivos</div>
-                  <div className="font-medium">{avaliacao.objetivos || '-'}</div>
+              {[
+                { label: 'Consultas', value: paciente.consultas.length },
+                { label: 'Avaliações', value: paciente.avaliacoes.length },
+                { label: 'Planos', value: paciente.planosTratamento.length },
+                { label: 'Prontuários', value: paciente.prontuarios.length },
+                { label: 'Pagamentos', value: paciente.pagamentos.length },
+              ].map(({ label, value }) => (
+                <div key={label} className="flex items-center justify-between">
+                  <span className="text-sm text-muted-foreground">{label}</span>
+                  <span className="text-sm font-semibold">{value}</span>
                 </div>
               ))}
             </div>
           </CardContent>
         </Card>
       </div>
-    </>
+
+ {/* Avaliação Inicial */}
+      <Card>
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <CardTitle>Avaliação Inicial</CardTitle>
+            <CreateAvaliacaoButton text="Nova Avaliação" />
+          </div>
+        </CardHeader>
+        <CardContent>
+          {paciente.avaliacoes.length === 0 ? (
+            <p className="text-sm text-muted-foreground">Nenhuma avaliação registrada.</p>
+          ) : (
+            <div className="space-y-4">
+              {paciente.avaliacoes.map((avaliacao) => (
+                <div key={avaliacao.id} className="rounded-lg border border-gray-200 p-4">
+                  <div className="flex items-start justify-between mb-3">
+                    <span className="text-sm text-muted-foreground">
+                      {format(avaliacao.data, "dd 'de' MMMM 'de' yyyy", { locale: ptBR })}
+                    </span>
+                    <div className="flex gap-1">
+                      <EditAvaliacaoButton
+                        avaliacao={{
+                          id: avaliacao.id,
+                          data: avaliacao.data,
+                          historiaDoenca: avaliacao.historiaDoenca ?? undefined,
+                          queixaPrincipal: avaliacao.queixaPrincipal,
+                          exameFisico: avaliacao.exameFisico ?? undefined,
+                          diagnostico: avaliacao.diagnostico ?? undefined,
+                          objetivos: avaliacao.objetivos ?? undefined,
+                        }}
+                      />
+                      <DeleteAvaliacaoDialog
+                        avaliacao={{
+                          id: avaliacao.id,
+                          data: avaliacao.data,
+                          queixaPrincipal: avaliacao.queixaPrincipal,
+                          historiaDoenca: avaliacao.historiaDoenca ?? undefined,
+                          exameFisico: avaliacao.exameFisico ?? undefined,
+                          diagnostico: avaliacao.diagnostico ?? undefined,
+                          objetivos: avaliacao.objetivos ?? undefined,
+                        }}
+                      />
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+                    {[
+                      { label: 'Queixa Principal', value: avaliacao.queixaPrincipal },
+                      { label: 'Diagnóstico', value: avaliacao.diagnostico },
+                      { label: 'História da Doença', value: avaliacao.historiaDoenca },
+                      { label: 'Exame Físico', value: avaliacao.exameFisico },
+                      { label: 'Objetivos', value: avaliacao.objetivos },
+                    ]
+                      .filter(({ value }) => value)
+                      .map(({ label, value }) => (
+                        <div key={label} className="md:col-span-2 last:md:col-span-2">
+                          <div className="text-xs text-muted-foreground mb-0.5">{label}</div>
+                          <div className="text-sm text-gray-800">{value}</div>
+                        </div>
+                      ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </CardContent>
+      </Card>
+      {/* Evolução Clínica — full width */}
+      <Card>
+        <CardHeader className="pb-3">
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle>Evolução Clínica</CardTitle>
+              <p className="text-sm text-muted-foreground mt-0.5">
+                {paciente.prontuarios.length === 0
+                  ? 'Nenhuma sessão registrada ainda'
+                  : `${paciente.prontuarios.length} sessão${paciente.prontuarios.length > 1 ? 'ões' : ''} registrada${paciente.prontuarios.length > 1 ? 's' : ''}`}
+              </p>
+            </div>
+            {paciente.prontuarios.length > 0 && <CreateProntuarioButton />}
+          </div>
+        </CardHeader>
+        <CardContent>
+          <ProntuarioTimeline prontuarios={prontuariosSerializados} />
+        </CardContent>
+      </Card>
+    </div>
   );
 }

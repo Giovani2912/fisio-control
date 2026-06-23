@@ -26,12 +26,26 @@ import {
   SelectTrigger,
   SelectValue,
 } from '../ui/select';
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from '../ui/command';
 import { useForm } from 'react-hook-form';
 import { useState, useEffect, type Ref } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { format } from 'date-fns';
-import { Calendar as CalendarIcon, Clock } from 'lucide-react';
+import {
+  Calendar as CalendarIcon,
+  Check,
+  ChevronsUpDown,
+  Clock,
+  Loader2,
+} from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Calendar } from '@/components/ui/calendar';
 import {
@@ -39,6 +53,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
+import * as PopoverPrimitive from '@radix-ui/react-popover';
 import { Textarea } from '@/components/ui/textarea';
 // Tipos para os campos do formulário
 export interface SelectOption {
@@ -46,14 +61,31 @@ export interface SelectOption {
   label: string;
 }
 
+export interface ComboboxGroup {
+  label: string;
+  options: SelectOption[];
+}
+
 export interface FormFieldConfig {
   name: string;
   label: string;
-  type: 'text' | 'email' | 'tel' | 'number' | 'select' | 'textarea' | 'date' | 'time';
+  type:
+    | 'text'
+    | 'email'
+    | 'tel'
+    | 'number'
+    | 'select'
+    | 'combobox'
+    | 'textarea'
+    | 'date'
+    | 'time';
   placeholder?: string;
   required?: boolean;
-  options?: SelectOption[]; // Para campos select
-  gridColumn?: 'full' | 'half'; // Para controlar o layout
+  options?: SelectOption[];
+  /** Sugestões agrupadas para o tipo 'combobox' (aceita texto livre). */
+  groups?: ComboboxGroup[];
+  gridColumn?: 'full' | 'half';
+  step?: number;
 }
 
 // Props do componente genérico
@@ -68,6 +100,7 @@ interface GenericUpsertProps<T extends Record<string, unknown>> {
   onSubmit: (data: T, isUpdate: boolean) => Promise<void>;
   entityId?: string;
   isLoading?: boolean;
+  onFieldChange?: (name: string, value: unknown, setValue: (name: string, value: unknown) => void) => void;
 }
 
 type RHFField = {
@@ -78,20 +111,121 @@ type RHFField = {
   ref?: Ref<HTMLInputElement | HTMLTextAreaElement>;
 };
 
+function ComboboxField({
+  value,
+  onChange,
+  placeholder,
+  groups,
+}: {
+  value: string;
+  onChange: (value: string) => void;
+  placeholder?: string;
+  groups: ComboboxGroup[];
+}) {
+  const [open, setOpen] = useState(false);
+  const [search, setSearch] = useState('');
+
+  const typed = search.trim();
+  const hasExactMatch = groups.some(group =>
+    group.options.some(o => o.label.toLowerCase() === typed.toLowerCase()),
+  );
+
+  const commit = (next: string) => {
+    onChange(next);
+    setOpen(false);
+    setSearch('');
+  };
+
+  return (
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger asChild>
+        <Button
+          type="button"
+          variant="outline"
+          role="combobox"
+          aria-expanded={open}
+          className="w-full justify-between font-normal"
+        >
+          <span className={cn('truncate', !value && 'text-muted-foreground')}>
+            {value || placeholder || 'Selecione...'}
+          </span>
+          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+        </Button>
+      </PopoverTrigger>
+      {/* Sem portal: renderiza dentro da árvore do Dialog para que o
+          react-remove-scroll não bloqueie o scroll do mouse na lista. */}
+      <PopoverPrimitive.Content
+        align="start"
+        sideOffset={4}
+        className="bg-popover text-popover-foreground data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 z-50 w-(--radix-popover-trigger-width) origin-(--radix-popover-content-transform-origin) rounded-md border p-0 shadow-md outline-hidden"
+      >
+        <Command>
+          <CommandInput
+            placeholder="Buscar ou digitar..."
+            value={search}
+            onValueChange={setSearch}
+          />
+          <CommandList>
+            <CommandEmpty>Nenhum diagnóstico encontrado.</CommandEmpty>
+            {typed && !hasExactMatch && (
+              <CommandGroup heading="Texto livre">
+                <CommandItem value={typed} onSelect={() => commit(typed)}>
+                  Usar &ldquo;{typed}&rdquo;
+                </CommandItem>
+              </CommandGroup>
+            )}
+            {groups.map(group => (
+              <CommandGroup key={group.label} heading={group.label}>
+                {group.options.map(option => (
+                  <CommandItem
+                    key={option.value}
+                    value={option.label}
+                    onSelect={() => commit(option.label)}
+                  >
+                    <Check
+                      className={cn(
+                        'h-4 w-4',
+                        value === option.label ? 'opacity-100' : 'opacity-0',
+                      )}
+                    />
+                    {option.label}
+                  </CommandItem>
+                ))}
+              </CommandGroup>
+            ))}
+          </CommandList>
+        </Command>
+      </PopoverPrimitive.Content>
+    </Popover>
+  );
+}
+
 const renderFormControl = (
   type: string,
   formField: RHFField,
   placeholder?: string,
   options?: Array<{ value: string; label: string }>,
+  step?: number,
+  groups?: ComboboxGroup[],
 ) => {
   switch (type) {
+    case 'combobox':
+      return (
+        <ComboboxField
+          value={(formField.value as string | undefined) ?? ''}
+          onChange={value => formField.onChange(value)}
+          placeholder={placeholder}
+          groups={groups ?? []}
+        />
+      );
+
     case 'select':
       return (
         <Select
           onValueChange={(v) => formField.onChange(v)}
           value={(formField.value as string | undefined) ?? ''}
         >
-          <SelectTrigger>
+          <SelectTrigger className="w-full">
             <SelectValue placeholder={placeholder} />
           </SelectTrigger>
           <SelectContent>
@@ -170,6 +304,7 @@ const renderFormControl = (
             type="time"
             className="pl-10"
             placeholder={placeholder}
+            step={step}
             value={
               timeDateValue
                 ? `${String(timeDateValue.getHours()).padStart(2, '0')}:${String(
@@ -219,6 +354,7 @@ function GenericUpsert<T extends Record<string, unknown>>({
   onSubmit,
   entityId,
   isLoading = false,
+  onFieldChange,
 }: GenericUpsertProps<T>) {
   const [internalLoading, setInternalLoading] = useState(false);
 
@@ -252,7 +388,7 @@ function GenericUpsert<T extends Record<string, unknown>>({
   const loading = isLoading || internalLoading;
 
   const renderField = (field: FormFieldConfig) => {
-    const { name, label, type, placeholder, options } = field;
+    const { name, label, type, placeholder, options, step, groups } = field;
 
     return (
       <FormField
@@ -261,17 +397,28 @@ function GenericUpsert<T extends Record<string, unknown>>({
         control={form.control}
         // @ts-expect-error Name maps to FieldPath<T> through config
         name={name}
-        render={({ field: formField }) => (
-          <FormItem
-            className={field.gridColumn === 'full' ? 'md:col-span-2' : ''}
-          >
-            <FormLabel>{label}</FormLabel>
-            <FormControl>
-              {renderFormControl(type, formField, placeholder, options)}
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        )}
+        render={({ field: formField }) => {
+          const wrappedFormField = onFieldChange
+            ? {
+                ...formField,
+                onChange: (value: unknown) => {
+                  formField.onChange(value);
+                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                  onFieldChange(name, value, (n, v) => form.setValue(n as any, v as any));
+                },
+              }
+            : formField;
+
+          return (
+            <FormItem className={field.gridColumn === 'full' ? 'md:col-span-2' : ''}>
+              <FormLabel>{label}</FormLabel>
+              <FormControl>
+                {renderFormControl(type, wrappedFormField, placeholder, options, step, groups)}
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          );
+        }}
       />
     );
   };
@@ -298,20 +445,29 @@ function GenericUpsert<T extends Record<string, unknown>>({
           <form
             // @ts-expect-error Submit handler types align structurally
             onSubmit={form.handleSubmit(handleSubmit)}
-            className="space-y-4"
+            className="space-y-6"
           >
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
               {fields.map(renderField)}
             </div>
 
-            <DialogFooter>
+            <DialogFooter className="border-t pt-4">
               <DialogClose asChild>
                 <Button type="button" variant="outline" disabled={loading}>
                   Cancelar
                 </Button>
               </DialogClose>
               <Button type="submit" disabled={loading}>
-                {loading ? 'Salvando...' : isUpdate ? 'Atualizar' : 'Cadastrar'}
+                {loading ? (
+                  <>
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    Salvando...
+                  </>
+                ) : isUpdate ? (
+                  'Atualizar'
+                ) : (
+                  'Cadastrar'
+                )}
               </Button>
             </DialogFooter>
           </form>

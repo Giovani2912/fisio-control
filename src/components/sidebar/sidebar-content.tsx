@@ -7,6 +7,7 @@ import {
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
 import Image from 'next/image';
+import SidebarUser from './sidebar-user';
 
 interface SidebarContentProps {
   pathname: string;
@@ -29,11 +30,6 @@ const menuItems = [
     icon: Calendar,
     label: 'Consultas',
   },
-  // {
-  //   href: '/admin/avaliacoes',
-  //   icon: Info,
-  //   label: 'Avaliações',
-  // },
 ];
 
 export default function SidebarContent({
@@ -86,19 +82,7 @@ export default function SidebarContent({
       </nav>
 
       {/* Footer */}
-      <div className="border-t border-gray-200 p-3 lg:p-4">
-        <div className="flex items-center gap-2 lg:gap-3 px-2 py-2 lg:px-4">
-          <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-green-500 lg:h-9 lg:w-9">
-            <span className="text-sm font-medium text-white">U</span>
-          </div>
-          <div className="min-w-0 flex-1">
-            <p className="truncate text-sm font-medium text-gray-900">
-              Usuário
-            </p>
-            <p className="truncate text-xs text-gray-500">usuario@email.com</p>
-          </div>
-        </div>
-      </div>
+      <SidebarUser />
     </div>
   );
 }

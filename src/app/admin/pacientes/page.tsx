@@ -3,6 +3,7 @@ import { Paciente as PacienteModel } from '@prisma/client';
 import { DataTable } from './data/data-table';
 import Title from '@/components/title';
 import prisma from '@/lib/prisma';
+import { auth } from '@clerk/nextjs/server';
 import {
   Pagination,
   PaginationContent,
@@ -23,6 +24,7 @@ interface PacientesProps {
 }
 
 async function getData(
+  userId: string,
   page: number = 1,
   search?: string,
 ): Promise<{
@@ -31,15 +33,15 @@ async function getData(
   totalPages: number;
   currentPage: number;
 }> {
-  // Seu código atual de getData permanece igual...
   const pageSize = 10;
   const skip = (page - 1) * pageSize;
 
-  const whereCondition = search
-    ? {
-      OR: [{ nome: { contains: search, mode: 'insensitive' as const } }],
-    }
-    : {};
+  const whereCondition = {
+    clerkUserId: userId,
+    ...(search
+      ? { OR: [{ nome: { contains: search, mode: 'insensitive' as const } }] }
+      : {}),
+  };
 
   const [data, total] = await Promise.all([
     prisma.paciente.findMany({
@@ -76,6 +78,7 @@ async function getData(
 }
 
 export default async function Pacientes({ searchParams }: PacientesProps) {
+  const { userId } = await auth();
   const { page: pageParam, search: searchParam } = await searchParams;
   const currentPage = Number(pageParam) || 1;
   const searchTerm = searchParam || '';
@@ -85,7 +88,7 @@ export default async function Pacientes({ searchParams }: PacientesProps) {
     total,
     totalPages,
     currentPage: page,
-  } = await getData(currentPage, searchTerm);
+  } = await getData(userId!, currentPage, searchTerm);
 
   // Gerar links de paginação (seu código atual)
   const generatePageNumbers = () => {

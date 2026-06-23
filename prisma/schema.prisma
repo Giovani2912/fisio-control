@@ -13,9 +13,10 @@ datasource db {
 // ===== ENTIDADES DE PESSOAS =====
 
 model Paciente {
-  id      String  @id @default(cuid())
-  nome    String
-  cpf     String  @unique
+  id          String  @id @default(cuid())
+  clerkUserId String
+  nome        String
+  cpf         String  @unique
   rg      String?
   email   String?
   celular String
@@ -117,8 +118,14 @@ model Prontuario {
   id            String   @id @default(cuid())
   data          DateTime @default(now())
   evolucao      String
-  procedimentos String?
-  observacoes   String?
+
+  // Entradas do fisioterapeuta (inputs para geração do SOAP)
+  queixaDoDia        String
+  nivelDor           Int?
+  regiaoCorpo        String
+  tecnicas           String
+  respostaTratamento String
+  observacoes        String?
 
   // Relacionamentos
   paciente   Paciente @relation(fields: [pacienteId], references: [id])
