@@ -82,7 +82,7 @@ export function DataTable<TData, TValue>({
           onChange={e =>
             table.getColumn('paciente')?.setFilterValue(e.target.value)
           }
-          className="h-8 w-48"
+          className="h-8 w-full sm:w-48"
         />
 
         <Select
@@ -91,7 +91,7 @@ export function DataTable<TData, TValue>({
             table.getColumn('tipo')?.setFilterValue(val === 'all' ? '' : val)
           }
         >
-          <SelectTrigger className="h-8 w-36">
+          <SelectTrigger className="h-8 min-w-0 flex-1 sm:w-36 sm:flex-none">
             <SelectValue placeholder="Tipo" />
           </SelectTrigger>
           <SelectContent>
@@ -112,7 +112,7 @@ export function DataTable<TData, TValue>({
             table.getColumn('status')?.setFilterValue(val === 'all' ? '' : val)
           }
         >
-          <SelectTrigger className="h-8 w-40">
+          <SelectTrigger className="h-8 min-w-0 flex-1 sm:w-40 sm:flex-none">
             <SelectValue placeholder="Status" />
           </SelectTrigger>
           <SelectContent>
@@ -150,7 +150,7 @@ export function DataTable<TData, TValue>({
             {table.getHeaderGroups().map(headerGroup => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map(header => (
-                  <TableHead key={header.id}>
+                  <TableHead key={header.id} className="whitespace-nowrap">
                     {header.isPlaceholder
                       ? null
                       : flexRender(

@@ -84,13 +84,12 @@ export default async function Dashboard() {
     label: `${p.nome}`,
   }));
 
-  console.log(totalConsultas)
   return (
     <>
       <Title title="Dashboard" />
 
       {/* Stats Grid */}
-      <div className="grid gap-6 md:grid-cols-4 mb-8">
+      <div className="grid grid-cols-2 gap-3 sm:gap-6 md:grid-cols-4 mb-8">
         {/* Total Pacientes */}
         <Card className="bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200">
           <CardHeader className="pb-3">
@@ -147,7 +146,7 @@ export default async function Dashboard() {
         </Card>
 
         {/* Quick Actions */}
-        <Card className="bg-gradient-to-br from-purple-50 to-purple-100 border-purple-200">
+        <Card className="col-span-2 bg-gradient-to-br from-purple-50 to-purple-100 border-purple-200 md:col-span-1">
           <CardHeader className="pb-3">
             <h3 className="text-sm font-medium text-gray-700">Ações Rápidas</h3>
           </CardHeader>

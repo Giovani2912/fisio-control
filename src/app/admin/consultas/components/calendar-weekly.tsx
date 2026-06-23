@@ -16,6 +16,8 @@ import { Button } from '@/components/ui/button';
 import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Consulta } from '../data/columns';
+import { ConsultaActions } from './consulta-actions';
+import type { SelectOption } from '@/components/upserts/generic-upsert';
 
 const TIPO_COLORS: Record<string, string> = {
   AVALIACAO: 'border-sky-200 bg-sky-100 text-sky-700',
@@ -36,7 +38,13 @@ const parseDate = (dateStr: string) => {
   return new Date(y, m - 1, d);
 };
 
-export function CalendarWeeklyView({ consultas }: { consultas: Consulta[] }) {
+export function CalendarWeeklyView({
+  consultas,
+  pacienteOptions,
+}: {
+  consultas: Consulta[];
+  pacienteOptions: SelectOption[];
+}) {
   const [currentDate, setCurrentDate] = useState(new Date());
 
   const weekStart = startOfWeek(currentDate, { weekStartsOn: 1 });
@@ -70,7 +78,74 @@ export function CalendarWeeklyView({ consultas }: { consultas: Consulta[] }) {
         </Button>
       </div>
 
-      <div className="grid grid-cols-7 gap-2">
+      {/* Agenda (mobile) — dias empilhados, legíveis em telas estreitas */}
+      <div className="flex flex-col gap-2 lg:hidden">
+        {days.map(day => {
+          const dayConsultas = getConsultasForDay(day);
+          const isCurrentDay = isToday(day);
+
+          return (
+            <div
+              key={day.toISOString()}
+              className={cn(
+                'flex gap-3 rounded-xl border p-3',
+                isCurrentDay ? 'border-primary/40 bg-primary/5' : 'border-gray-100',
+              )}
+            >
+              <div
+                className={cn(
+                  'flex h-12 w-12 shrink-0 flex-col items-center justify-center rounded-lg',
+                  isCurrentDay
+                    ? 'bg-primary text-primary-foreground'
+                    : 'bg-muted/50 text-foreground',
+                )}
+              >
+                <span className="text-[10px] font-medium uppercase">
+                  {format(day, 'EEE', { locale: ptBR })}
+                </span>
+                <span className="text-base font-bold leading-none">
+                  {format(day, 'd')}
+                </span>
+              </div>
+
+              <div className="flex min-w-0 flex-1 flex-col gap-1.5">
+                {dayConsultas.length === 0 ? (
+                  <span className="self-start py-1 text-xs text-muted-foreground">
+                    Sem consultas
+                  </span>
+                ) : (
+                  dayConsultas.map(c => (
+                    <div
+                      key={c.id}
+                      className={cn(
+                        'flex items-center gap-2 rounded-md border px-2 py-1.5 text-xs',
+                        TIPO_COLORS[c.tipo] ??
+                          'border-gray-200 bg-gray-100 text-gray-700',
+                      )}
+                    >
+                      <span className="font-semibold tabular-nums">{c.horaInicio}</span>
+                      <div className="min-w-0 flex-1">
+                        <div className="truncate font-medium">{c.paciente}</div>
+                        <div className="opacity-70">
+                          {TIPO_LABELS[c.tipo] ?? c.tipo}
+                        </div>
+                      </div>
+                      <ConsultaActions
+                        consulta={c}
+                        pacienteOptions={pacienteOptions}
+                        className="shrink-0"
+                      />
+                    </div>
+                  ))
+                )}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Grid de 7 colunas (desktop) */}
+      <div className="hidden grid-cols-7 gap-2 lg:grid">
         {days.map(day => {
           const dayConsultas = getConsultasForDay(day);
           const isCurrentDay = isToday(day);
@@ -91,7 +166,7 @@ export function CalendarWeeklyView({ consultas }: { consultas: Consulta[] }) {
                 <div className="text-sm font-bold">{format(day, 'd')}</div>
               </div>
 
-              <div className="flex min-h-[160px] flex-col gap-1">
+              <div className="flex min-h-40 flex-col gap-1">
                 {dayConsultas.length === 0 ? (
                   <div className="mt-2 text-center text-[10px] text-muted-foreground">
                     —
@@ -111,6 +186,11 @@ export function CalendarWeeklyView({ consultas }: { consultas: Consulta[] }) {
                       <div className="opacity-70">
                         {TIPO_LABELS[c.tipo] ?? c.tipo}
                       </div>
+                      <ConsultaActions
+                        consulta={c}
+                        pacienteOptions={pacienteOptions}
+                        className="mt-1 justify-end"
+                      />
                     </div>
                   ))
                 )}

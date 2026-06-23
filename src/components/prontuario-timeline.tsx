@@ -147,11 +147,11 @@ function ProntuarioEntry({ prontuario }: { prontuario: ProntuarioItem }) {
             </p>
           )}
 
-          <div className="flex items-center justify-between pt-2 border-t border-gray-100">
-            <p className="text-xs text-gray-400">
+          <div className="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-gray-100">
+            <p className="min-w-0 flex-1 text-xs text-gray-400">
               ✦ Gerado por IA — revisado pelo fisioterapeuta responsável (CREFITO)
             </p>
-            <div className="flex items-center gap-1">
+            <div className="flex items-center gap-1 shrink-0">
               <EditProntuarioButton
                 prontuario={{
                   id: prontuario.id,

@@ -1,11 +1,15 @@
 'use client';
 import { usePathname } from 'next/navigation';
 import { useState } from 'react';
-import { Menu, X } from 'lucide-react';
+import { LogIn, LogOut, Menu, X } from 'lucide-react';
 import SidebarContent from './sidebar-content';
 import { Button } from '../ui/button';
-import Image from 'next/image';
-import Link from 'next/link';
+import {
+  Show,
+  SignInButton,
+  SignOutButton,
+  SignUpButton,
+} from '@clerk/nextjs';
 
 export default function Sidebar() {
   const pathname = usePathname();
@@ -27,19 +31,31 @@ export default function Sidebar() {
           {isMobileMenuOpen ? <X size={22} /> : <Menu size={22} />}
         </Button>
 
-        <div className="flex items-center gap-2 lg:gap-3">
-          <Link href="/" className="flex-shrink-0">
-            <Image
-              src="/globe.svg"
-              alt="Fisio Control Logo"
-              width={32}
-              height={32}
-              className="lg:w-9 lg:h-9"
-            />
-          </Link>
-          <span className="text-lg font-bold tracking-tight text-green-700 lg:text-xl truncate">
-            Fisio Control
-          </span>
+        <div className="flex items-center gap-2">
+          <Show when="signed-in">
+            <SignOutButton>
+              <Button variant="outline" size="sm">
+                <LogOut className="h-4 w-4" />
+                Sair
+              </Button>
+            </SignOutButton>
+          </Show>
+          <Show when="signed-out">
+            <SignInButton mode="modal">
+              <Button variant="outline" size="sm">
+                <LogIn className="h-4 w-4" />
+                Entrar
+              </Button>
+            </SignInButton>
+            <SignUpButton mode="modal">
+              <Button
+                size="sm"
+                className="bg-green-600 text-white hover:bg-green-700"
+              >
+                Criar conta
+              </Button>
+            </SignUpButton>
+          </Show>
         </div>
       </nav>
 

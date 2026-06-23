@@ -47,8 +47,8 @@ export default async function PacienteInfo({
     <div className="space-y-6 mt-8">
 
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-gray-900">{paciente.nome}</h1>
+      <div className="flex items-start justify-between gap-3">
+        <h1 className="min-w-0 text-2xl font-bold wrap-break-word text-gray-900">{paciente.nome}</h1>
         <EditPacienteButton
           paciente={{
             id: paciente.id,
@@ -73,7 +73,7 @@ export default async function PacienteInfo({
             <CardTitle>Dados do Paciente</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-2 gap-x-8 gap-y-4">
+            <div className="grid grid-cols-1 gap-x-8 gap-y-4 sm:grid-cols-2">
               {[
                 { label: 'CPF', value: paciente.cpf },
                 { label: 'RG', value: paciente.rg || '-' },
@@ -84,14 +84,14 @@ export default async function PacienteInfo({
                 { label: 'Convênio', value: paciente.convenio || '-' },
                 { label: 'Nº Convênio', value: paciente.numeroConvenio || '-' },
               ].map(({ label, value }) => (
-                <div key={label}>
+                <div key={label} className="min-w-0">
                   <div className="text-xs text-muted-foreground">{label}</div>
-                  <div className="text-sm font-medium text-gray-900">{value}</div>
+                  <div className="text-sm font-medium wrap-break-word text-gray-900">{value}</div>
                 </div>
               ))}
-              <div className="col-span-2">
+              <div className="min-w-0 sm:col-span-2">
                 <div className="text-xs text-muted-foreground">Contato de Emergência</div>
-                <div className="text-sm font-medium text-gray-900">
+                <div className="text-sm font-medium wrap-break-word text-gray-900">
                   {paciente.contato_emergencia || '-'}
                 </div>
               </div>
@@ -176,9 +176,9 @@ export default async function PacienteInfo({
                     ]
                       .filter(({ value }) => value)
                       .map(({ label, value }) => (
-                        <div key={label} className="md:col-span-2 last:md:col-span-2">
+                        <div key={label} className="min-w-0 md:col-span-2 last:md:col-span-2">
                           <div className="text-xs text-muted-foreground mb-0.5">{label}</div>
-                          <div className="text-sm text-gray-800">{value}</div>
+                          <div className="text-sm wrap-break-word text-gray-800">{value}</div>
                         </div>
                       ))}
                   </div>

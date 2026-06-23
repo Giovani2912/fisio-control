@@ -27,20 +27,23 @@ export const CreateConsultaButton = ({
 };
 
 interface EditConsultaButtonProps {
-  avaliacao: ConsultaFormData & { id: string };
+  consulta: ConsultaFormData & { id: string };
+  pacienteOptions?: { value: string; label: string }[];
 }
 
 export const EditConsultaButton = ({
-  avaliacao,
+  consulta,
+  pacienteOptions,
 }: EditConsultaButtonProps) => {
   return (
-    <GenericEditButton entity={avaliacao}>
+    <GenericEditButton entity={consulta}>
       {(isOpen, setIsOpen, entity) => (
         <UpsertConsulta
           isOpen={isOpen}
           setIsOpen={setIsOpen}
           defaultValues={entity}
           avaliacaoId={entity.id}
+          pacienteOptions={pacienteOptions}
         />
       )}
     </GenericEditButton>
