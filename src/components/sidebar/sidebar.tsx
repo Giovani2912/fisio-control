@@ -1,6 +1,6 @@
 'use client';
 import { usePathname } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { LogIn, LogOut, Menu, X } from 'lucide-react';
 import SidebarContent from './sidebar-content';
 import { Button } from '../ui/button';
@@ -18,6 +18,18 @@ export default function Sidebar() {
   const closeMobileMenu = () => {
     setIsMobileMenuOpen(false);
   };
+
+  // Bloqueia o scroll do fundo enquanto o menu mobile estiver aberto.
+  useEffect(() => {
+    if (!isMobileMenuOpen) return;
+
+    const { overflow } = document.body.style;
+    document.body.style.overflow = 'hidden';
+
+    return () => {
+      document.body.style.overflow = overflow;
+    };
+  }, [isMobileMenuOpen]);
 
   return (
     <>
