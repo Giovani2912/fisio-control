@@ -11,6 +11,7 @@ import {
   Star,
   Stethoscope,
 } from 'lucide-react';
+import AnimationContainer from '@/components/animation-container';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
@@ -160,40 +161,50 @@ export default function Home() {
           className="absolute -top-24 left-1/2 -z-10 h-72 w-72 -translate-x-1/2 rounded-full bg-emerald-300/40 blur-3xl"
         />
         <div className="mx-auto max-w-5xl px-6 pt-20 pb-16 text-center sm:pt-28">
-          <Badge variant="success" className="mx-auto mb-6 gap-1.5">
-            <Sparkles className="h-3.5 w-3.5" />
-            Copiloto de IA para Fisioterapia
-          </Badge>
-          <h1 className="text-4xl leading-tight font-extrabold tracking-tight text-gray-900 sm:text-6xl">
-            Documentação clínica
-            <br />
-            <span className="bg-linear-to-r from-blue-500 to-emerald-500 bg-clip-text text-transparent">
-              em segundos, não em horas
-            </span>
-          </h1>
-          <p className="mx-auto mt-6 max-w-2xl text-lg text-gray-600">
-            Prontuários SOAP, prescrição de exercícios e laudos para convênios
-            gerados por IA. Você atende, a plataforma documenta. Mais tempo para
-            o paciente e para você.
-          </p>
-          <div className="mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row">
-            <Button
-              asChild
-              size="lg"
-              className="bg-green-600 px-7 text-white hover:bg-green-700"
-            >
-              <Link href="/sign-up">
-                Começar gratuitamente
-                <ArrowRight className="h-4 w-4" />
-              </Link>
-            </Button>
-            <Button asChild size="lg" variant="outline" className="px-7">
-              <Link href="#precos">Ver planos</Link>
-            </Button>
-          </div>
-          <p className="mt-5 text-sm text-gray-500">
-            Sem cartão de crédito • 3 gerações de IA grátis por mês
-          </p>
+          <AnimationContainer>
+            <Badge variant="success" className="mx-auto mb-6 gap-1.5">
+              <Sparkles className="h-3.5 w-3.5" />
+              Copiloto de IA para Fisioterapia
+            </Badge>
+          </AnimationContainer>
+          <AnimationContainer delay={0.1}>
+            <h1 className="text-4xl leading-tight font-extrabold tracking-tight text-gray-900 sm:text-6xl">
+              Documentação clínica
+              <br />
+              <span className="bg-linear-to-r from-blue-500 to-emerald-500 bg-clip-text text-transparent">
+                em segundos, não em horas
+              </span>
+            </h1>
+          </AnimationContainer>
+          <AnimationContainer delay={0.2}>
+            <p className="mx-auto mt-6 max-w-2xl text-lg text-gray-600">
+              Prontuários SOAP, prescrição de exercícios e laudos para convênios
+              gerados por IA. Você atende, a plataforma documenta. Mais tempo
+              para o paciente e para você.
+            </p>
+          </AnimationContainer>
+          <AnimationContainer delay={0.3}>
+            <div className="mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row">
+              <Button
+                asChild
+                size="lg"
+                className="bg-green-600 px-7 text-white hover:bg-green-700"
+              >
+                <Link href="/sign-up">
+                  Começar gratuitamente
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
+              </Button>
+              <Button asChild size="lg" variant="outline" className="px-7">
+                <Link href="#precos">Ver planos</Link>
+              </Button>
+            </div>
+          </AnimationContainer>
+          <AnimationContainer delay={0.4}>
+            <p className="mt-5 text-sm text-gray-500">
+              Sem cartão de crédito • 3 gerações de IA grátis por mês
+            </p>
+          </AnimationContainer>
         </div>
       </section>
 
@@ -205,47 +216,48 @@ export default function Home() {
             { value: 'SOAP', label: 'padrão internacional' },
             { value: 'LGPD', label: 'dados criptografados' },
             { value: '24/7', label: 'disponível no celular' },
-          ].map((stat) => (
-            <div key={stat.label}>
+          ].map((stat, index) => (
+            <AnimationContainer key={stat.label} delay={index * 0.1}>
               <div className="text-3xl font-bold text-gray-900">
                 {stat.value}
               </div>
               <div className="mt-1 text-sm text-gray-500">{stat.label}</div>
-            </div>
+            </AnimationContainer>
           ))}
         </div>
       </section>
 
       {/* Features */}
       <section className="mx-auto max-w-6xl px-6 py-20">
-        <div className="mx-auto max-w-2xl text-center">
-          <Badge variant="default" className="mb-4">
-            Recursos
-          </Badge>
-          <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
-            Tudo o que a sua clínica precisa
-          </h2>
-          <p className="mt-4 text-gray-600">
-            Uma camada de experiência de IA construída sobre a sua rotina
-            clínica — sem prompts abertos, sem complicação.
-          </p>
-        </div>
+        <AnimationContainer>
+          <div className="mx-auto max-w-2xl text-center">
+            <Badge variant="default" className="mb-4">
+              Recursos
+            </Badge>
+            <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
+              Tudo o que a sua clínica precisa
+            </h2>
+            <p className="mt-4 text-gray-600">
+              Uma camada de experiência de IA construída sobre a sua rotina
+              clínica — sem prompts abertos, sem complicação.
+            </p>
+          </div>
+        </AnimationContainer>
         <div className="mt-14 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {features.map((feature) => (
-            <Card
-              key={feature.title}
-              className="border-gray-200 transition-shadow hover:shadow-md"
-            >
-              <CardHeader>
-                <div className="mb-2 flex h-11 w-11 items-center justify-center rounded-lg bg-emerald-100 text-emerald-700">
-                  <feature.icon className="h-5 w-5" />
-                </div>
-                <CardTitle className="text-lg">{feature.title}</CardTitle>
-                <CardDescription className="text-base">
-                  {feature.description}
-                </CardDescription>
-              </CardHeader>
-            </Card>
+          {features.map((feature, index) => (
+            <AnimationContainer key={feature.title} delay={index * 0.1}>
+              <Card className="h-full border-gray-200 transition-shadow hover:shadow-md">
+                <CardHeader>
+                  <div className="mb-2 flex h-11 w-11 items-center justify-center rounded-lg bg-emerald-100 text-emerald-700">
+                    <feature.icon className="h-5 w-5" />
+                  </div>
+                  <CardTitle className="text-lg">{feature.title}</CardTitle>
+                  <CardDescription className="text-base">
+                    {feature.description}
+                  </CardDescription>
+                </CardHeader>
+              </Card>
+            </AnimationContainer>
           ))}
         </div>
       </section>
@@ -253,17 +265,23 @@ export default function Home() {
       {/* How it works */}
       <section className="bg-white">
         <div className="mx-auto max-w-6xl px-6 py-20">
-          <div className="mx-auto max-w-2xl text-center">
-            <Badge variant="default" className="mb-4">
-              Como funciona
-            </Badge>
-            <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
-              Três passos para a sua evolução pronta
-            </h2>
-          </div>
+          <AnimationContainer>
+            <div className="mx-auto max-w-2xl text-center">
+              <Badge variant="default" className="mb-4">
+                Como funciona
+              </Badge>
+              <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
+                Três passos para a sua evolução pronta
+              </h2>
+            </div>
+          </AnimationContainer>
           <div className="mt-14 grid gap-8 md:grid-cols-3">
-            {steps.map((item) => (
-              <div key={item.step} className="relative">
+            {steps.map((item, index) => (
+              <AnimationContainer
+                key={item.step}
+                delay={index * 0.15}
+                className="relative"
+              >
                 <div className="text-5xl font-extrabold text-emerald-200">
                   {item.step}
                 </div>
@@ -271,7 +289,7 @@ export default function Home() {
                   {item.title}
                 </h3>
                 <p className="mt-2 text-gray-600">{item.description}</p>
-              </div>
+              </AnimationContainer>
             ))}
           </div>
         </div>
@@ -279,110 +297,115 @@ export default function Home() {
 
       {/* Pricing */}
       <section id="precos" className="mx-auto max-w-6xl px-6 py-20">
-        <div className="mx-auto max-w-2xl text-center">
-          <Badge variant="default" className="mb-4">
-            Planos
-          </Badge>
-          <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
-            Preços simples e transparentes
-          </h2>
-          <p className="mt-4 text-gray-600">
-            Comece grátis e evolua quando a sua agenda pedir. Cancele quando
-            quiser.
-          </p>
-        </div>
+        <AnimationContainer>
+          <div className="mx-auto max-w-2xl text-center">
+            <Badge variant="default" className="mb-4">
+              Planos
+            </Badge>
+            <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
+              Preços simples e transparentes
+            </h2>
+            <p className="mt-4 text-gray-600">
+              Comece grátis e evolua quando a sua agenda pedir. Cancele quando
+              quiser.
+            </p>
+          </div>
+        </AnimationContainer>
         <div className="mt-14 grid items-start gap-8 lg:grid-cols-3">
-          {plans.map((plan) => (
-            <Card
-              key={plan.name}
-              className={
-                plan.highlighted
-                  ? 'relative border-emerald-500 shadow-lg ring-1 ring-emerald-500'
-                  : 'border-gray-200'
-              }
-            >
-              {plan.highlighted && (
-                <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                  <Badge variant="success" className="gap-1 shadow-sm">
-                    <Star className="h-3.5 w-3.5 fill-current" />
-                    Mais popular
-                  </Badge>
-                </div>
-              )}
-              <CardHeader>
-                <CardTitle className="text-xl">{plan.name}</CardTitle>
-                <CardDescription className="text-base">
-                  {plan.description}
-                </CardDescription>
-                <div className="mt-4 flex items-baseline gap-1">
-                  <span className="text-4xl font-extrabold text-gray-900">
-                    {plan.price}
-                  </span>
-                  <span className="text-gray-500">{plan.period}</span>
-                </div>
-              </CardHeader>
-              <CardContent className="flex flex-1 flex-col">
-                <ul className="space-y-3">
-                  {plan.features.map((item) => (
-                    <li key={item} className="flex items-start gap-2.5">
-                      <Check className="mt-0.5 h-5 w-5 shrink-0 text-emerald-600" />
-                      <span className="text-sm text-gray-600">{item}</span>
-                    </li>
-                  ))}
-                </ul>
-                <Button
-                  asChild
-                  size="lg"
-                  variant={plan.highlighted ? 'default' : 'outline'}
-                  className={
-                    plan.highlighted
-                      ? 'mt-8 w-full bg-green-600 text-white hover:bg-green-700'
-                      : 'mt-8 w-full'
-                  }
-                >
-                  <Link href="/sign-up">{plan.cta}</Link>
-                </Button>
-              </CardContent>
-            </Card>
+          {plans.map((plan, index) => (
+            <AnimationContainer key={plan.name} delay={index * 0.1}>
+              <Card
+                className={
+                  plan.highlighted
+                    ? 'relative border-emerald-500 shadow-lg ring-1 ring-emerald-500'
+                    : 'border-gray-200'
+                }
+              >
+                {plan.highlighted && (
+                  <div className="absolute -top-3 left-1/2 -translate-x-1/2">
+                    <Badge variant="success" className="gap-1 shadow-sm">
+                      <Star className="h-3.5 w-3.5 fill-current" />
+                      Mais popular
+                    </Badge>
+                  </div>
+                )}
+                <CardHeader>
+                  <CardTitle className="text-xl">{plan.name}</CardTitle>
+                  <CardDescription className="text-base">
+                    {plan.description}
+                  </CardDescription>
+                  <div className="mt-4 flex items-baseline gap-1">
+                    <span className="text-4xl font-extrabold text-gray-900">
+                      {plan.price}
+                    </span>
+                    <span className="text-gray-500">{plan.period}</span>
+                  </div>
+                </CardHeader>
+                <CardContent className="flex flex-1 flex-col">
+                  <ul className="space-y-3">
+                    {plan.features.map((item) => (
+                      <li key={item} className="flex items-start gap-2.5">
+                        <Check className="mt-0.5 h-5 w-5 shrink-0 text-emerald-600" />
+                        <span className="text-sm text-gray-600">{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                  <Button
+                    asChild
+                    size="lg"
+                    variant={plan.highlighted ? 'default' : 'outline'}
+                    className={
+                      plan.highlighted
+                        ? 'mt-8 w-full bg-green-600 text-white hover:bg-green-700'
+                        : 'mt-8 w-full'
+                    }
+                  >
+                    <Link href="/sign-up">{plan.cta}</Link>
+                  </Button>
+                </CardContent>
+              </Card>
+            </AnimationContainer>
           ))}
         </div>
       </section>
 
       {/* CTA */}
       <section className="px-6 pb-20">
-        <div className="relative mx-auto max-w-5xl overflow-hidden rounded-3xl bg-linear-to-br from-emerald-600 to-blue-600 px-6 py-16 text-center shadow-xl">
-          <div
-            aria-hidden
-            className="absolute -right-10 -bottom-10 h-48 w-48 rounded-full bg-white/10 blur-2xl"
-          />
-          <h2 className="text-3xl font-bold tracking-tight text-white sm:text-4xl">
-            Pronto para ir para casa mais cedo?
-          </h2>
-          <p className="mx-auto mt-4 max-w-xl text-emerald-50">
-            Junte-se aos fisioterapeutas que automatizaram a parte chata e
-            recuperaram o tempo com os pacientes.
-          </p>
-          <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
-            <Button
-              asChild
-              size="lg"
-              className="bg-white px-7 text-emerald-700 hover:bg-emerald-50"
-            >
-              <Link href="/sign-up">
-                Criar conta grátis
-                <ArrowRight className="h-4 w-4" />
-              </Link>
-            </Button>
-            <Button
-              asChild
-              size="lg"
-              variant="outline"
-              className="border-white/40 bg-transparent px-7 text-white hover:bg-white/10 hover:text-white"
-            >
-              <Link href="/sign-in">Já tenho conta</Link>
-            </Button>
+        <AnimationContainer>
+          <div className="relative mx-auto max-w-5xl overflow-hidden rounded-3xl bg-linear-to-br from-emerald-600 to-blue-600 px-6 py-16 text-center shadow-xl">
+            <div
+              aria-hidden
+              className="absolute -right-10 -bottom-10 h-48 w-48 rounded-full bg-white/10 blur-2xl"
+            />
+            <h2 className="text-3xl font-bold tracking-tight text-white sm:text-4xl">
+              Pronto para ir para casa mais cedo?
+            </h2>
+            <p className="mx-auto mt-4 max-w-xl text-emerald-50">
+              Junte-se aos fisioterapeutas que automatizaram a parte chata e
+              recuperaram o tempo com os pacientes.
+            </p>
+            <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
+              <Button
+                asChild
+                size="lg"
+                className="bg-white px-7 text-emerald-700 hover:bg-emerald-50"
+              >
+                <Link href="/sign-up">
+                  Criar conta grátis
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
+              </Button>
+              <Button
+                asChild
+                size="lg"
+                variant="outline"
+                className="border-white/40 bg-transparent px-7 text-white hover:bg-white/10 hover:text-white"
+              >
+                <Link href="/sign-in">Já tenho conta</Link>
+              </Button>
+            </div>
           </div>
-        </div>
+        </AnimationContainer>
       </section>
 
       {/* Footer / disclaimer */}
